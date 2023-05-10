@@ -17,14 +17,6 @@ function Head(props) {
         <Navbar.Collapse className="justify-content-end">
           <Col md={2}>
             <Nav.Link
-              href="/logout"
-              style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan" }}
-            >
-              Logout
-            </Nav.Link>
-          </Col>
-          <Col md={2}>
-            <Nav.Link
               href="/explore"
               style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan" }}
             >
@@ -33,18 +25,28 @@ function Head(props) {
           </Col>
           <Col md={2}>
             <Nav.Link
+              href="/feed"
+              style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan"}}
+            >
+              Feed
+            </Nav.Link>
+          </Col>
+
+          <Col md={2}>
+            <Nav.Link
               href="/profile"
               style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan" }}
             >
               Profile
             </Nav.Link>
           </Col>
+
           <Col md={2}>
             <Nav.Link
-              href="/feed"
-              style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan"}}
+              href="/logout"
+              style={{ fontSize: "4vh", textDecoration: "underline", textDecorationColor: "cyan" }}
             >
-              Feed
+              Logout
             </Nav.Link>
           </Col>
 
