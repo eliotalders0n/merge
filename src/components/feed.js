@@ -12,6 +12,8 @@ import {
 import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
 
+// fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
+
 function Feed(props) {
   const [body, setBody] = useState("group");
   const [activeFilter, setActiveFilter] = useState("social");
@@ -70,8 +72,39 @@ function Feed(props) {
     }
   };
 
-  console.log("uid : " + user_id);
-  const handlePostSubmit = async () => {
+
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+
+  // Get device location
+  useEffect(() => {
+    const getLocation = () => {
+      if (navigator.geolocation) {
+        const options = {
+          enableHighAccuracy: true, // Request high-accuracy positioning
+          timeout: 5000, // Timeout in milliseconds
+          maximumAge: 0 // No cache
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+          },
+          (error) => {
+            console.log(error.message);
+          },
+          options
+        );
+      } else {
+        console.log('Geolocation is not supported by this browser.');
+      }
+    };
+
+    getLocation();
+  }, []);
+
+  const HandlePostSubmit = async () => {    
     // 1. Create a new post document in Firestore
     const postsCollection = firebase.firestore().collection("posts");
     const newPost = {
@@ -79,6 +112,8 @@ function Feed(props) {
       user: user_id,
       group: user_details.group,
       imageUrl: "",
+      longitude: longitude,
+      latitude: latitude,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     };
     const postRef = await postsCollection.add(newPost);
@@ -217,7 +252,7 @@ function Feed(props) {
           </div>
           {/* <progress value={uploadProgress} max="100" /> */}
           <br />
-          <Button variant="outline-dark" onClick={handlePostSubmit}>
+          <Button variant="outline-dark" onClick={HandlePostSubmit}>
             Submit
           </Button>
           <br />
