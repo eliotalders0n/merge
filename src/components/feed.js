@@ -8,7 +8,6 @@ import {
   Card,
   Row,
   Form,
-  Alert
 } from "react-bootstrap";
 import firebase from "./../firebase";
 
@@ -176,7 +175,7 @@ function Feed(props) {
             />
             <Form.Control className="my-1" type="file" onChange={handleImageChange} />
             <br />
-            {imagePreview && <img style={{maxWidth:" 30vh"}} src={imagePreview} alt="Image Preview" />}
+            {imagePreview && <img style={{maxWidth:" 30vh"}} src={imagePreview} alt=" post state" />}
           </Row>
           <div class="progress my-2">
             <div

@@ -1,17 +1,15 @@
 import {useState, useEffect} from 'react';
-import { Link as RouterLink, useNavigate,  } from 'react-router-dom';
+// import { useNavigate  } from 'react-router-dom';
 import Head from "./template/head";
 import { Container, Button, Col, Card, Row, Form } from "react-bootstrap";
-import useGetUser from "./hooks/useGetUser";
 import firebase from './../firebase' 
 
 function Profile(props) {
-  const navigate = useNavigate();
-  const [values, setValues] = useState(null);
+  // const [values, setValues] = useState(null);
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
+  // const handleChange = (prop) => (event) => {
+  //   setValues({ ...values, [prop]: event.target.value });
+  // };
 
   const [user_, setdocs] = useState([]);
 
