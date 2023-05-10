@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import Head from "./template/head";
 import {
   Container,
@@ -7,7 +7,10 @@ import {
   ToggleButton,
   Card,
   Row,
+  Form,
+  Alert
 } from "react-bootstrap";
+import firebase from "./../firebase";
 
 function Feed(props) {
   const [body, setBody] = useState("group");
@@ -26,6 +29,91 @@ function Feed(props) {
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
+  };
+
+  // Post to merge
+
+  const [user_, setdocs] = useState([]);
+
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .onSnapshot((doc) => {
+        setdocs(doc.data());
+      });
+  }, []);
+
+  const [postText, setPostText] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleTextChange = (e) => {
+    setPostText(e.target.value);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
+  const handlePostSubmit = async () => {
+    // 1. Create a new post document in Firestore
+    const postsCollection = firebase.firestore().collection("posts");
+    const newPost = {
+      text: postText,
+      user: user_,
+      imageUrl: "",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    const postRef = await postsCollection.add(newPost);
+
+    // 2. Upload the image file to Firebase Storage (if selected)
+    if (imageFile) {
+      const storageRef = firebase.storage().ref();
+      const imageRef = storageRef.child(`postImages/${postRef.id}`);
+      const uploadTask = imageRef.put(imageFile);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setUploadProgress(progress);
+          console.log(progress);
+        },
+        (error) => {
+          console.error("Error uploading image:", error);
+        },
+        () => {
+          // 3. Get the download URL of the uploaded image and update the post document in Firestore
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            postRef.update({
+              imageUrl: downloadURL,
+            });
+          });
+        }
+      );
+      
+    }
+
+    // Reset form fields
+    setPostText("");
+    setImageFile(null);
+    setUploadProgress(0);
+
   };
 
   return (
@@ -74,6 +162,39 @@ function Feed(props) {
         >
           Serve
         </Button>
+      </Container>
+
+      <Container className="d-flex justify-content-center">
+        <Row style={{maxWidth:" 70vh"}}>
+          <h2>Tell us</h2>
+          <Row>
+            <Form.Control
+              as="textarea"
+              placeholder="Enter your post text"
+              value={postText}
+              onChange={handleTextChange}
+            />
+            <Form.Control className="my-1" type="file" onChange={handleImageChange} />
+            <br />
+            {imagePreview && <img style={{maxWidth:" 30vh"}} src={imagePreview} alt="Image Preview" />}
+          </Row>
+          <div class="progress my-2">
+            <div
+              class="progress-bar progress-bar-striped progress-bar-animated"
+              role="progressbar"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              style={{ width: uploadProgress+"%" }}
+            ></div>
+          </div>
+          {/* <progress value={uploadProgress} max="100" /> */}
+          <br />
+          <Button variant="outline-dark" onClick={handlePostSubmit}>
+            Submit
+          </Button>
+          <br />
+        </Row>
       </Container>
 
       <Container fluid className="d-flex justify-content-center">
@@ -218,8 +339,8 @@ function Feed(props) {
           </Row>
         )}
 
-{/* Public data */}
-{body === "public" && activeFilter === "social" && (
+        {/* Public data */}
+        {body === "public" && activeFilter === "social" && (
           <Row>
             <Card
               className="mx-auto my-2"
@@ -359,8 +480,6 @@ function Feed(props) {
             <br />
           </Row>
         )}
-
-        
       </Container>
     </Container>
   );
