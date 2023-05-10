@@ -33,7 +33,8 @@ function Feed(props) {
 
   // Post to merge
 
-  const [user_, setdocs] = useState([]);
+  const [user_id, setUserID] = useState([]);
+  const [user_details, setUserDetails] = useState([]);
 
   useEffect(() => {
     firebase
@@ -41,7 +42,8 @@ function Feed(props) {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .onSnapshot((doc) => {
-        setdocs(doc.data());
+        setUserID(firebase.auth().currentUser.uid);
+        setUserDetails(doc.data())
       });
   }, []);
 
@@ -68,12 +70,14 @@ function Feed(props) {
     }
   };
 
+  console.log("uid : " + user_id);
   const handlePostSubmit = async () => {
     // 1. Create a new post document in Firestore
     const postsCollection = firebase.firestore().collection("posts");
     const newPost = {
       text: postText,
-      user: user_,
+      user: user_id,
+      group: user_details.group,
       imageUrl: "",
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     };
@@ -116,10 +120,23 @@ function Feed(props) {
 
   const Posts = useGetPosts().docs;
 
+  const deleteItem = (id) => {
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .delete()
+      .then(() => {
+        alert("Post was deleted successfully");
+      })
+      .catch((e) => {
+        alert(e);
+      });
+  };
+
   return (
     <Container fluid>
       <Head />
-
       <Container className="d-flex justify-content-center my-2">
         <ButtonGroup>
           {radios.map((radio, idx) => (
@@ -210,7 +227,7 @@ function Feed(props) {
       <Container fluid className="d-flex justify-content-center">
         {body === "group" && activeFilter === "social" && (
           <Row>
-            {Posts.map((post) => {
+            {Posts.filter((post) => post.group === user_details.group).map((post) => {
               return (
                 <Card
                   className="mx-auto my-2"
@@ -227,7 +244,15 @@ function Feed(props) {
                     <Card.Text>
                       <p>{post.text}</p>
                     </Card.Text>
-                    {/* <Button variant="dark">Go somewhere</Button> */}
+                    {user_id && user_id === post.user && (
+                      <Button
+                        variant="outline-dark"
+                        onClick={() => deleteItem(post.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    
                   </Card.Body>
                 </Card>
               );
@@ -332,49 +357,37 @@ function Feed(props) {
         {/* Public data */}
         {body === "public" && activeFilter === "social" && (
           <Row>
-            <Card
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 2</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
-          </Row>
+          {Posts.map((post) => {
+            return (
+              <Card
+                className="mx-auto my-2"
+                style={{
+                  maxWidth: "30rem",
+                  border: "none",
+                  padding: "0",
+                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                }}
+              >
+                <Card.Img variant="top" src={post.imageUrl} />
+                <Card.Body>
+                  <Card.Title>Test</Card.Title>
+                  <Card.Text>
+                    <p>{post.text}</p>
+                  </Card.Text>
+                  {user_id && user_id === post.user && (
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => deleteItem(post.id)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  
+                </Card.Body>
+              </Card>
+            );
+          })}
+        </Row>
         )}
 
         {body === "public" && activeFilter === "events" && (
