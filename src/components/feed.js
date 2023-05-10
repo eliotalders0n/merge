@@ -10,6 +10,7 @@ import {
   Form,
 } from "react-bootstrap";
 import firebase from "./../firebase";
+import useGetPosts from "./hooks/useGetPosts";
 
 function Feed(props) {
   const [body, setBody] = useState("group");
@@ -105,15 +106,15 @@ function Feed(props) {
           });
         }
       );
-      
     }
 
     // Reset form fields
     setPostText("");
     setImageFile(null);
     setUploadProgress(0);
-
   };
+
+  const Posts = useGetPosts().docs;
 
   return (
     <Container fluid>
@@ -164,7 +165,7 @@ function Feed(props) {
       </Container>
 
       <Container className="d-flex justify-content-center">
-        <Row style={{maxWidth:" 70vh"}}>
+        <Row style={{ maxWidth: " 70vh" }}>
           <h2>Tell us</h2>
           <Row>
             <Form.Control
@@ -173,9 +174,19 @@ function Feed(props) {
               value={postText}
               onChange={handleTextChange}
             />
-            <Form.Control className="my-1" type="file" onChange={handleImageChange} />
+            <Form.Control
+              className="my-1"
+              type="file"
+              onChange={handleImageChange}
+            />
             <br />
-            {imagePreview && <img style={{maxWidth:" 30vh"}} src={imagePreview} alt=" post state" />}
+            {imagePreview && (
+              <img
+                style={{ maxWidth: " 30vh" }}
+                src={imagePreview}
+                alt=" post state"
+              />
+            )}
           </Row>
           <div class="progress my-2">
             <div
@@ -184,7 +195,7 @@ function Feed(props) {
               aria-valuenow="0"
               aria-valuemin="0"
               aria-valuemax="100"
-              style={{ width: uploadProgress+"%" }}
+              style={{ width: uploadProgress + "%" }}
             ></div>
           </div>
           {/* <progress value={uploadProgress} max="100" /> */}
@@ -199,48 +210,28 @@ function Feed(props) {
       <Container fluid className="d-flex justify-content-center">
         {body === "group" && activeFilter === "social" && (
           <Row>
-            <Card
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 1</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
+            {Posts.map((post) => {
+              return (
+                <Card
+                  className="mx-auto my-2"
+                  style={{
+                    maxWidth: "30rem",
+                    border: "none",
+                    padding: "0",
+                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                  }}
+                >
+                  <Card.Img variant="top" src={post.imageUrl} />
+                  <Card.Body>
+                    <Card.Title>Test</Card.Title>
+                    <Card.Text>
+                      <p>{post.text}</p>
+                    </Card.Text>
+                    {/* <Button variant="dark">Go somewhere</Button> */}
+                  </Card.Body>
+                </Card>
+              );
+            })}
           </Row>
         )}
 
