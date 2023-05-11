@@ -36,12 +36,12 @@ function Login(props) {
     <Container fluid>
       <Row className="d-flex justify-content-center my-5">
         <Col md={12} className="text-center">
-          <h1 style={{ fontSize: "18vh" }}>
+          <h1 style={{ fontSize: "10vh" }}>
             Mer<span style={{ color: "purple" }}>ge</span>
           </h1>
         </Col>
-        <Col md={2} className="my-2">
-          <Card style={{ width: "18rem" }}>
+        <Col className="my-2">
+          <Card>
             <Card.Img
               variant="top"
               src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-5267.jpg?w=826&t=st=1682639471~exp=1682640071~hmac=a621b6be08fdf261d744f283bc62d89ea651cdae96620846b39f256d4088261d"

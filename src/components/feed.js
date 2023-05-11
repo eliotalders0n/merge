@@ -109,7 +109,8 @@ function Feed(props) {
     const postsCollection = firebase.firestore().collection("posts");
     const newPost = {
       text: postText,
-      user: user_id,
+      user_id: user_id,
+      user_name: user_details.firstName,
       group: user_details.group,
       imageUrl: "",
       longitude: longitude,
@@ -240,9 +241,9 @@ function Feed(props) {
               />
             )}
           </Row>
-          <div class="progress my-2">
+          <div className="progress my-2">
             <div
-              class="progress-bar progress-bar-striped progress-bar-animated"
+              className="progress-bar progress-bar-striped progress-bar-animated"
               role="progressbar"
               aria-valuenow="0"
               aria-valuemin="0"
@@ -265,6 +266,7 @@ function Feed(props) {
             {Posts.filter((post) => post.group === user_details.group).map((post) => {
               return (
                 <Card
+                key={post.id}
                   className="mx-auto my-2"
                   style={{
                     maxWidth: "30rem",
@@ -275,11 +277,11 @@ function Feed(props) {
                 >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
-                    <Card.Title>Test</Card.Title>
+                    <Card.Title>{post.user_name}</Card.Title>
                     <Card.Text>
                       <p>{post.text}</p>
                     </Card.Text>
-                    {user_id && user_id === post.user && (
+                    {user_id && user_id === post.user_id && (
                       <Button
                         variant="outline-dark"
                         onClick={() => deleteItem(post.id)}
