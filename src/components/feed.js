@@ -267,14 +267,14 @@ function Feed(props) {
               return (
                 <Card
                 key={post.id}
-                  className="mx-auto my-2"
-                  style={{
-                    maxWidth: "30rem",
-                    border: "none",
-                    padding: "0",
-                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                  }}
-                >
+                className="mx-auto my-2"
+                style={{
+                  maxWidth: "30rem",
+                  border: "none",
+                  padding: "0",
+                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                }}
+              >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
                     <Card.Title>{post.user_name}</Card.Title>
@@ -407,11 +407,11 @@ function Feed(props) {
               >
                 <Card.Img variant="top" src={post.imageUrl} />
                 <Card.Body>
-                  <Card.Title>Test</Card.Title>
+                  <Card.Title>{post.user_name}</Card.Title>
                   <Card.Text>
                     <p>{post.text}</p>
                   </Card.Text>
-                  {user_id && user_id === post.user && (
+                  {user_id && user_id === post.user_id && (
                     <Button
                       variant="outline-dark"
                       onClick={() => deleteItem(post.id)}

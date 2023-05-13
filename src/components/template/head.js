@@ -14,7 +14,7 @@ function Head(props) {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then((snap) => {
-        console.log(" currentUser.uid " + firebase.auth().currentUser.email);
+        // console.log(" currentUser.uid " + firebase.auth().currentUser.email);
         setuser(firebase.auth().currentUser);
       });
   }, []);
@@ -33,9 +33,10 @@ function Head(props) {
     <Navbar bg="light" expand="lg">
       <Container className="text-center" style={{ backgroundColor: "white" }}>
         <Navbar.Brand href="/" className="mx-auto">
-          <h1>
+          <img style={{ borderRadius: "5px", width: "17vh" }} src="/assets/344741779_633096014894033_8998160269009553873_n.jpg" alt="merge logo"/>
+          {/* <h1>
             <span style={{ color: "black", fontSize: "7vh" }}>Merge</span>
-          </h1>
+          </h1> */}
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
