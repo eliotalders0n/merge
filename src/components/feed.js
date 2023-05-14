@@ -148,10 +148,6 @@ function Feed(props) {
       );
     }
 
-    // Reset form fields
-    setPostText("");
-    setImageFile(null);
-    setUploadProgress(0);
   };
 
   const Posts = useGetPosts().docs;
@@ -169,6 +165,9 @@ function Feed(props) {
         alert(e);
       });
   };
+
+  // Reset form fields
+  
 
   return (
     <Container fluid>
@@ -299,7 +298,10 @@ function Feed(props) {
 
         {body === "group" && activeFilter === "events" && (
           <Row>
-            <Card
+          {Posts.filter((post) => post.postType === "event").map((post) => {
+            return (
+              <Card
+              key={post.id}
               className="mx-auto my-2"
               style={{
                 maxWidth: "30rem",
@@ -308,86 +310,61 @@ function Feed(props) {
                 boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
               }}
             >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1600096194534-95cf5ece04cf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 1</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
-          </Row>
+                <Card.Img variant="top" src={post.imageUrl} />
+                <Card.Body>
+                  <Card.Title>{post.user_name}</Card.Title>
+                  <Card.Text>
+                    <p>{post.text}</p>
+                  </Card.Text>
+                  {user_id && user_id === post.user_id && (
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => deleteItem(post.id)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  
+                </Card.Body>
+              </Card>
+            );
+          })}
+        </Row>
         )}
 
         {body === "group" && activeFilter === "serve" && (
           <Row>
-            <Card
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 1</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
+            {Posts.filter((post) => post.postType === "serve").map((post) => {
+              return (
+                <Card
+                key={post.id}
+                className="mx-auto my-2"
+                style={{
+                  maxWidth: "30rem",
+                  border: "none",
+                  padding: "0",
+                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                }}
+              >
+                  <Card.Img variant="top" src={post.imageUrl} />
+                  <Card.Body>
+                    <Card.Title>{post.user_name}</Card.Title>
+                    <Card.Text>
+                      <p>{post.text}</p>
+                    </Card.Text>
+                    {user_id && user_id === post.user_id && (
+                      <Button
+                        variant="outline-dark"
+                        onClick={() => deleteItem(post.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    
+                  </Card.Body>
+                </Card>
+              );
+            })}
           </Row>
         )}
 
@@ -429,7 +406,10 @@ function Feed(props) {
 
         {body === "public" && activeFilter === "events" && (
           <Row>
-            <Card
+          {Posts.filter((post) => post.postType === "event").map((post) => {
+            return (
+              <Card
+              key={post.id}
               className="mx-auto my-2"
               style={{
                 maxWidth: "30rem",
@@ -438,45 +418,34 @@ function Feed(props) {
                 boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
               }}
             >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 2</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
-          </Row>
+                <Card.Img variant="top" src={post.imageUrl} />
+                <Card.Body>
+                  <Card.Title>{post.user_name}</Card.Title>
+                  <Card.Text>
+                    <p>{post.text}</p>
+                  </Card.Text>
+                  {user_id && user_id === post.user_id && (
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => deleteItem(post.id)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  
+                </Card.Body>
+              </Card>
+            );
+          })}
+        </Row>
         )}
 
         {body === "public" && activeFilter === "serve" && (
           <Row>
-            <Card
+          {Posts.filter((post) => post.postType === "serve").map((post) => {
+            return (
+              <Card
+              key={post.id}
               className="mx-auto my-2"
               style={{
                 maxWidth: "30rem",
@@ -485,40 +454,26 @@ function Feed(props) {
                 boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
               }}
             >
-              <Card.Img
-                variant="top"
-                src="https://images.unsplash.com/photo-1524253482453-3fed8d2fe12b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=688&q=80"
-              />
-              <Card.Body>
-                <Card.Title>Card Title</Card.Title>
-                <Card.Text>
-                  <p>Test 2</p>
-                </Card.Text>
-                <Button variant="dark">Go somewhere</Button>
-              </Card.Body>
-            </Card>
-            <br />
-
-            <Card
-              className="mx-auto my-2"
-              border="dark"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                boxShadow: "2px 2px 2px 2px rgba(0, 80, 80, 0.4)",
-              }}
-            >
-              <Card.Header>Header</Card.Header>
-              <Card.Body>
-                <Card.Title>Dark Card Title</Card.Title>
-                <Card.Text>
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-            <br />
-          </Row>
+                <Card.Img variant="top" src={post.imageUrl} />
+                <Card.Body>
+                  <Card.Title>{post.user_name}</Card.Title>
+                  <Card.Text>
+                    <p>{post.text}</p>
+                  </Card.Text>
+                  {user_id && user_id === post.user_id && (
+                    <Button
+                      variant="outline-dark"
+                      onClick={() => deleteItem(post.id)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                  
+                </Card.Body>
+              </Card>
+            );
+          })}
+        </Row>
         )}
       </Container>
     </Container>
