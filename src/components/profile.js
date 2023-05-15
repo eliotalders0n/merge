@@ -3,13 +3,11 @@ import {useState, useEffect} from 'react';
 import Head from "./template/head";
 import { Container, Button, Col, Card, Row, Form } from "react-bootstrap";
 import firebase from './../firebase' 
+import useGetGroup from './hooks/useGetGroup';
+import useGetPosts from './hooks/useGetPosts';
 
 function Profile(props) {
-  // const [values, setValues] = useState(null);
-
-  // const handleChange = (prop) => (event) => {
-  //   setValues({ ...values, [prop]: event.target.value });
-  // };
+  const Posts = useGetPosts().docs;
 
   const [user_, setdocs] = useState([]);
 
@@ -23,6 +21,23 @@ function Profile(props) {
       });
   }, []);
 
+  const deleteItem = (id) => {
+    firebase
+      .firestore()
+      .collection("posts")
+      .doc(id)
+      .delete()
+      .then(() => {
+        alert("Post was deleted successfully");
+      })
+      .catch((e) => {
+        alert(e);
+      });
+  };
+
+  const Group = useGetGroup(user_.group).docs;
+  const user_id = firebase.auth().currentUser.uid
+
   return (
     <Container fluid>
       <Head />
@@ -35,48 +50,52 @@ function Profile(props) {
             border: "none",
             padding: "0",
             boxShadow: "2px 2px 8px 4px rgba(0, 60, 60, 0.3)",
-            backgroundImage: `url("https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")`,
+            backgroundColor: "rgb(220,220,220)",
+            // backgroundImage: `url("https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80")`,
             filter: "grayscale(75%)",
             backgroundSize: "cover",
-            color: "white",
+            color: "black",
             height: "70vh",
           }}
         >
           <Card.Body>
-            <Card.Title>Update Profile</Card.Title>
-            <Form className="my-5">
+            <Card.Title >Update Profile</Card.Title>
+            <p className="text-muted">Please contact your group admin to change account details</p>
+            <Form className="my-3">
             <Form.Group as={Col} controlId="formGridEmail">
                   <Form.Label>Full Name</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email" value={user_.firstName + " " +  user_.lastName} />
+                  <Form.Control readonly type="email" placeholder="Enter email" value={user_.firstName + " " +  user_.lastName} />
                 </Form.Group>
 
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridEmail">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" placeholder="Enter email" value={user_.email} />
+                  <Form.Control readonly type="email" placeholder="Enter email" value={user_.email} />
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridPassword">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" placeholder="Password" value={user_.password} />
+                  <Form.Control readonly type="password" placeholder="Password" value={user_.password} />
                 </Form.Group>
               </Row>
 
-              <Form.Group className="mb-3" controlId="formGridAddress1">
+              <Row className="mb-3">
+              <Form.Group as={Col} controlId="formGridAddress1">
                 <Form.Label>Address</Form.Label>
-                <Form.Control placeholder="1234 Main St" value={user_.address} />
+                <Form.Control readonly placeholder="1234 Main St" value={user_.address} />
               </Form.Group>
 
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridCity">
+              <Form.Group as={Col} controlId="formGridCity">
                   <Form.Label>Group</Form.Label>
-                  <Form.Control placeholder='14' value={user_.group}/>
+                  <Form.Control readonly placeholder='14' value={Group.name}/>
                 </Form.Group>
-
+                </Row>
+                
+              <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridState">
                   <Form.Label>Gender</Form.Label>
-                  <Form.Select defaultValue="Choose...">
-                    <option>Choose</option>
+                  <Form.Select defaultValue={user_.gender}>
+                    <option>{user_.gender}</option>
                     <option>Male</option>
                     <option>Female</option>
                   </Form.Select>
@@ -84,13 +103,14 @@ function Profile(props) {
 
                 <Form.Group as={Col} controlId="formGridZip">
                   <Form.Label>Age</Form.Label>
-                  <Form.Control placeholder='20' value={user_.age}/>
+                  <Form.Control readonly placeholder='20' value={user_.age}/>
                 </Form.Group>
               </Row>
 
-              <Button variant="dark" type="submit">
+<p className="text-muted">We do not abuse or sell any information on this site. All information is strictly used by the church for record keeping and accountability</p>
+              {/* <Button variant="dark" type="submit">
                 Submit
-              </Button>
+              </Button> */}
             </Form>
           </Card.Body>
         </Card>
@@ -100,76 +120,38 @@ function Profile(props) {
       <Container fluid className="d-flex justify-content-center my-5">
         <Row>
           <h3 className="display-3">History</h3>
-          <Card
-            className="mx-auto my-2"
-            style={{
-              maxWidth: "30rem",
-              border: "none",
-              padding: "0",
-              boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-            }}
-          >
-            <Card.Img
-              variant="top"
-              src="https://images.unsplash.com/photo-1493612276216-ee3925520721?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
-            />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="dark">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <br />
-          <Card
-            className="mx-auto my-2"
-            style={{
-              maxWidth: "30rem",
-              border: "none",
-              padding: "0",
-              boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-            }}
-          >
-            <Card.Img
-              variant="top"
-              src="https://images.unsplash.com/photo-1527525443983-6e60c75fff46?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=685&q=80"
-            />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="dark">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <br />
-          <Card
-            className="mx-auto my-2"
-            style={{
-              maxWidth: "30rem",
-              border: "none",
-              padding: "0",
-              boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-            }}
-          >
-            <Card.Img
-              variant="top"
-              src="https://images.unsplash.com/photo-1510972527921-ce03766a1cf1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-            />
-            <Card.Body>
-              <Card.Title>Card Title</Card.Title>
-              <Card.Text>
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </Card.Text>
-              <Button variant="dark">Go somewhere</Button>
-            </Card.Body>
-          </Card>
-          <br />
-        </Row>
+          
+          {Posts.filter((post) => post.user_id === user_id).map((post) => {
+              return (
+                <Card
+                key={post.id}
+                className="mx-auto my-2"
+                style={{
+                  maxWidth: "30rem",
+                  border: "none",
+                  padding: "0",
+                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                }}
+              >
+                  <Card.Img variant="top" src={post.imageUrl} />
+                  <Card.Body>
+                    <Card.Title>{post.user_name}</Card.Title>
+                    <Card.Text>
+                      <p>{post.text}</p>
+                    </Card.Text>
+                    <img src={Group.img} alt="group representation" style={{ width: "6vh", borderRadius: "100px", marginRight: "2vh"}}/>
+                      <Button
+                        variant="outline-dark"
+                        onClick={() => deleteItem(post.id)}
+                      >
+                        Delete
+                      </Button>
+                    
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </Row>
       </Container>
     </Container>
   );

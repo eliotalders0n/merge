@@ -30,8 +30,8 @@ function Head(props) {
   };
 
   return (
-    <Navbar bg="light" expand="lg">
-      <Container className="text-center" style={{ backgroundColor: "white" }}>
+    <Navbar expand="lg" >
+      <Container className="text-center">
         <Navbar.Brand href="/" className="mx-auto">
           <img style={{ borderRadius: "5px", width: "17vh" }} src="/assets/344741779_633096014894033_8998160269009553873_n.jpg" alt="merge logo"/>
           {/* <h1>

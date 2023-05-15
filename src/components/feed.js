@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
+import useGetGroup from "./hooks/useGetGroup";
 
 // fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
 
@@ -111,7 +112,7 @@ function Feed(props) {
       text: postText,
       user_id: user_id,
       user_name: user_details.firstName,
-      group: user_details.group,
+      group: Group.GroupNumber,
       imageUrl: "",
       longitude: longitude,
       latitude: latitude,
@@ -151,6 +152,9 @@ function Feed(props) {
   };
 
   const Posts = useGetPosts().docs;
+  const Group = useGetGroup(user_details.group).docs;  
+
+  console.log(" testststt : " + Group);
 
   const deleteItem = (id) => {
     firebase
@@ -170,7 +174,7 @@ function Feed(props) {
   
 
   return (
-    <Container fluid>
+    <Container fluid style={{backgroundColor: "rgb(220,220,220)"}}>
       <Head />
       <Container className="d-flex justify-content-center my-2">
         <ButtonGroup>
@@ -262,7 +266,7 @@ function Feed(props) {
       <Container fluid className="d-flex justify-content-center">
         {body === "group" && activeFilter === "social" && (
           <Row>
-            {Posts.filter((post) => post.group === user_details.group).map((post) => {
+            {Posts.filter((post) => post.group === Group.GroupNumber).map((post) => {
               return (
                 <Card
                 key={post.id}
@@ -280,6 +284,7 @@ function Feed(props) {
                     <Card.Text>
                       <p>{post.text}</p>
                     </Card.Text>
+                    <img src={Group.img} alt="group representation" style={{ width: "6vh", borderRadius: "100px", marginRight: "2vh"}}/>
                     {user_id && user_id === post.user_id && (
                       <Button
                         variant="outline-dark"
