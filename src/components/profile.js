@@ -1,15 +1,27 @@
 import {useState, useEffect} from 'react';
-// import { useNavigate  } from 'react-router-dom';
 import Head from "./template/head";
 import { Container, Button, Col, Card, Row, Form } from "react-bootstrap";
 import firebase from './../firebase' 
 import useGetGroup from './hooks/useGetGroup';
 import useGetPosts from './hooks/useGetPosts';
+import { useNavigate } from "react-router-dom";
 
 function Profile(props) {
   const Posts = useGetPosts().docs;
 
   const [user_, setdocs] = useState([]);
+  const navigate = useNavigate();
+
+  const Logout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        navigate("/", { replace: true });
+        window.location.reload(false);
+      });
+  };
+
 
   useEffect(() => {
     firebase
@@ -108,9 +120,9 @@ function Profile(props) {
               </Row>
 
 <p className="text-muted">We do not abuse or sell any information on this site. All information is strictly used by the church for record keeping and accountability</p>
-              {/* <Button variant="dark" type="submit">
+              <Button variant="dark" onClick={() => Logout()}>
                 Submit
-              </Button> */}
+              </Button>
             </Form>
           </Card.Body>
         </Card>

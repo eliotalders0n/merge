@@ -174,7 +174,7 @@ function Feed(props) {
   
 
   return (
-    <Container fluid style={{backgroundColor: "rgb(220,220,220)"}}>
+    <Container fluid style={{backgroundColor: "rgb(220,220,220)", marginBottom : "10vh"}}>
       <Head />
       <Container className="d-flex justify-content-center my-2">
         <ButtonGroup>
