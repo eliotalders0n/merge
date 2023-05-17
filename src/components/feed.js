@@ -8,6 +8,7 @@ import {
   Card,
   Row,
   Form,
+  Badge
 } from "react-bootstrap";
 import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
@@ -46,7 +47,7 @@ function Feed(props) {
       .doc(firebase.auth().currentUser.uid)
       .onSnapshot((doc) => {
         setUserID(firebase.auth().currentUser.uid);
-        setUserDetails(doc.data())
+        setUserDetails(doc.data());
       });
   }, []);
 
@@ -54,6 +55,11 @@ function Feed(props) {
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [imagePreview, setImagePreview] = useState(null);
+  const [checkboxValue, setCheckboxValue] = useState(false);
+
+  const handleCheckboxChange = (e) => {
+    setCheckboxValue(e.target.checked);
+  };
 
   const handleTextChange = (e) => {
     setPostText(e.target.value);
@@ -73,7 +79,6 @@ function Feed(props) {
     }
   };
 
-
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
 
@@ -84,7 +89,7 @@ function Feed(props) {
         const options = {
           enableHighAccuracy: true, // Request high-accuracy positioning
           timeout: 5000, // Timeout in milliseconds
-          maximumAge: 0 // No cache
+          maximumAge: 0, // No cache
         };
 
         navigator.geolocation.getCurrentPosition(
@@ -98,14 +103,14 @@ function Feed(props) {
           options
         );
       } else {
-        console.log('Geolocation is not supported by this browser.');
+        console.log("Geolocation is not supported by this browser.");
       }
     };
 
     getLocation();
   }, []);
 
-  const HandlePostSubmit = async () => {    
+  const HandlePostSubmit = async () => {
     // 1. Create a new post document in Firestore
     const postsCollection = firebase.firestore().collection("posts");
     const newPost = {
@@ -113,7 +118,9 @@ function Feed(props) {
       user_id: user_id,
       user_name: user_details.firstName,
       group: Group.GroupNumber,
+      groupImage: Group.img,
       imageUrl: "",
+      post_status: checkboxValue,
       longitude: longitude,
       latitude: latitude,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -145,16 +152,19 @@ function Feed(props) {
               imageUrl: downloadURL,
             });
           });
+          setUploadProgress(0);
         }
       );
     }
 
+    setCheckboxValue(false);
+    setImagePreview("");
+    setImageFile(null);
+    setPostText("");
   };
 
   const Posts = useGetPosts().docs;
-  const Group = useGetGroup(user_details.group).docs;  
-
-  console.log(" testststt : " + Group);
+  const Group = useGetGroup(user_details.group).docs;
 
   const deleteItem = (id) => {
     firebase
@@ -171,10 +181,13 @@ function Feed(props) {
   };
 
   // Reset form fields
-  
 
   return (
-    <Container fluid style={{backgroundColor: "rgb(220,220,220)", marginBottom : "10vh"}}>
+    <Container
+      fluid
+      style={{ backgroundColor: "rgb(220,220,220)", marginBottom: "10vh" }}
+    >
+      <p className="display-3 text-center">Hey {user_details.firstName}</p>
       <Head />
       <Container className="d-flex justify-content-center my-2">
         <ButtonGroup>
@@ -235,6 +248,13 @@ function Feed(props) {
               type="file"
               onChange={handleImageChange}
             />
+            <Form.Check
+              checked={checkboxValue}
+              onChange={handleCheckboxChange}
+              type="checkbox"
+              label="Group Only"
+              id="post-status"
+            />
             <br />
             {imagePreview && (
               <img
@@ -254,7 +274,6 @@ function Feed(props) {
               style={{ width: uploadProgress + "%" }}
             ></div>
           </div>
-          {/* <progress value={uploadProgress} max="100" /> */}
           <br />
           <Button variant="outline-dark" onClick={HandlePostSubmit}>
             Submit
@@ -266,25 +285,86 @@ function Feed(props) {
       <Container fluid className="d-flex justify-content-center">
         {body === "group" && activeFilter === "social" && (
           <Row>
-            {Posts.filter((post) => post.group === Group.GroupNumber).map((post) => {
+            {Posts.filter((post) => post.group === Group.GroupNumber).map(
+              (post) => {
+                return (
+                  <Card
+                    key={post.id}
+                    className="mx-auto my-2"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                    {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
+                      <Card.Title>{post.user_name}</Card.Title>
+                      <Card.Text>
+                        <p>{post.text}</p>
+                      </Card.Text>
+                      <img
+                        src={post.groupImage}
+                        alt="group representation"
+                        style={{
+                          width: "6vh",
+                          borderRadius: "100px",
+                          marginRight: "2vh",
+                        }}
+                      />
+                      
+                      {user_id && user_id === post.user_id && (
+                        <Button
+                          variant="outline-dark"
+                          onClick={() => deleteItem(post.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </Card.Body>
+                  </Card>
+                );
+              }
+            )}
+          </Row>
+        )}
+
+        {body === "group" && activeFilter === "events" && (
+          <Row>
+            {Posts.filter((post) => post.postType === "event").map((post) => {
               return (
                 <Card
-                key={post.id}
-                className="mx-auto my-2"
-                style={{
-                  maxWidth: "30rem",
-                  border: "none",
-                  padding: "0",
-                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                }}
-              >
+                  key={post.id}
+                  className="mx-auto my-2"
+                  style={{
+                    maxWidth: "30rem",
+                    border: "none",
+                    padding: "0",
+                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                  }}
+                >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
+                  {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
                     <Card.Title>{post.user_name}</Card.Title>
                     <Card.Text>
                       <p>{post.text}</p>
                     </Card.Text>
-                    <img src={Group.img} alt="group representation" style={{ width: "6vh", borderRadius: "100px", marginRight: "2vh"}}/>
+                    <img
+                      src={post.groupImage}
+                      alt="group representation"
+                      style={{
+                        width: "6vh",
+                        borderRadius: "100px",
+                        marginRight: "2vh",
+                      }}
+                    />
                     {user_id && user_id === post.user_id && (
                       <Button
                         variant="outline-dark"
@@ -293,7 +373,6 @@ function Feed(props) {
                         Delete
                       </Button>
                     )}
-                    
                   </Card.Body>
                 </Card>
               );
@@ -301,62 +380,39 @@ function Feed(props) {
           </Row>
         )}
 
-        {body === "group" && activeFilter === "events" && (
-          <Row>
-          {Posts.filter((post) => post.postType === "event").map((post) => {
-            return (
-              <Card
-              key={post.id}
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-                <Card.Img variant="top" src={post.imageUrl} />
-                <Card.Body>
-                  <Card.Title>{post.user_name}</Card.Title>
-                  <Card.Text>
-                    <p>{post.text}</p>
-                  </Card.Text>
-                  {user_id && user_id === post.user_id && (
-                    <Button
-                      variant="outline-dark"
-                      onClick={() => deleteItem(post.id)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>
-        )}
-
         {body === "group" && activeFilter === "serve" && (
           <Row>
             {Posts.filter((post) => post.postType === "serve").map((post) => {
               return (
                 <Card
-                key={post.id}
-                className="mx-auto my-2"
-                style={{
-                  maxWidth: "30rem",
-                  border: "none",
-                  padding: "0",
-                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                }}
-              >
+                  key={post.id}
+                  className="mx-auto my-2"
+                  style={{
+                    maxWidth: "30rem",
+                    border: "none",
+                    padding: "0",
+                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                  }}
+                >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
+                  {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
                     <Card.Title>{post.user_name}</Card.Title>
                     <Card.Text>
                       <p>{post.text}</p>
                     </Card.Text>
+                    <img
+                      src={post.groupImage}
+                      alt="group representation"
+                      style={{
+                        width: "6vh",
+                        borderRadius: "100px",
+                        marginRight: "2vh",
+                      }}
+                    />
+
                     {user_id && user_id === post.user_id && (
                       <Button
                         variant="outline-dark"
@@ -365,7 +421,6 @@ function Feed(props) {
                         Delete
                       </Button>
                     )}
-                    
                   </Card.Body>
                 </Card>
               );
@@ -376,109 +431,148 @@ function Feed(props) {
         {/* Public data */}
         {body === "public" && activeFilter === "social" && (
           <Row>
-          {Posts.map((post) => {
-            return (
-              <Card
-                className="mx-auto my-2"
-                style={{
-                  maxWidth: "30rem",
-                  border: "none",
-                  padding: "0",
-                  boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                }}
-              >
-                <Card.Img variant="top" src={post.imageUrl} />
-                <Card.Body>
-                  <Card.Title>{post.user_name}</Card.Title>
-                  <Card.Text>
-                    <p>{post.text}</p>
-                  </Card.Text>
-                  {user_id && user_id === post.user_id && (
-                    <Button
-                      variant="outline-dark"
-                      onClick={() => deleteItem(post.id)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>
+            {Posts.map((post) => {
+              if (!post.post_status) {
+                return (
+                  <Card
+                    className="mx-auto my-2"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                    {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
+                      <Card.Title>{post.user_name}</Card.Title>
+                      <Card.Text>
+                        <p>{post.text}</p>
+                      </Card.Text>
+                      <img
+                        src={post.groupImage}
+                        alt="group representation"
+                        style={{
+                          width: "6vh",
+                          borderRadius: "100px",
+                          marginRight: "2vh",
+                        }}
+                      />
+                      {user_id && user_id === post.user_id && (
+                        <Button
+                          variant="outline-dark"
+                          onClick={() => deleteItem(post.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </Card.Body>
+                  </Card>
+                );
+              } else { return null;}
+            })}
+          </Row>
         )}
 
         {body === "public" && activeFilter === "events" && (
           <Row>
-          {Posts.filter((post) => post.postType === "event").map((post) => {
-            return (
-              <Card
-              key={post.id}
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-                <Card.Img variant="top" src={post.imageUrl} />
-                <Card.Body>
-                  <Card.Title>{post.user_name}</Card.Title>
-                  <Card.Text>
-                    <p>{post.text}</p>
-                  </Card.Text>
-                  {user_id && user_id === post.user_id && (
-                    <Button
-                      variant="outline-dark"
-                      onClick={() => deleteItem(post.id)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>
+            {Posts.filter((post) => post.postType === "event").map((post) => {
+              if (!post.post_status)
+              return (
+                <Card
+                  key={post.id}
+                  className="mx-auto my-2"
+                  style={{
+                    maxWidth: "30rem",
+                    border: "none",
+                    padding: "0",
+                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                  }}
+                >
+                  <Card.Img variant="top" src={post.imageUrl} />
+                  <Card.Body>
+                  {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
+                    <Card.Title>{post.user_name}</Card.Title>
+                    <Card.Text>
+                      <p>{post.text}</p>
+                    </Card.Text>
+                    <img
+                      src={post.groupImage}
+                      alt="group representation"
+                      style={{
+                        width: "6vh",
+                        borderRadius: "100px",
+                        marginRight: "2vh",
+                      }}
+                    />
+    
+                    {user_id && user_id === post.user_id && (
+                      <Button
+                        variant="outline-dark"
+                        onClick={() => deleteItem(post.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </Card.Body>
+                </Card>
+              ); else { return null;}
+            })}
+          </Row>
         )}
 
         {body === "public" && activeFilter === "serve" && (
           <Row>
-          {Posts.filter((post) => post.postType === "serve").map((post) => {
-            return (
-              <Card
-              key={post.id}
-              className="mx-auto my-2"
-              style={{
-                maxWidth: "30rem",
-                border: "none",
-                padding: "0",
-                boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-              }}
-            >
-                <Card.Img variant="top" src={post.imageUrl} />
-                <Card.Body>
-                  <Card.Title>{post.user_name}</Card.Title>
-                  <Card.Text>
-                    <p>{post.text}</p>
-                  </Card.Text>
-                  {user_id && user_id === post.user_id && (
-                    <Button
-                      variant="outline-dark"
-                      onClick={() => deleteItem(post.id)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>
+            {Posts.filter((post) => post.postType === "serve").map((post) => {
+              if (!post.post_status)
+              return (
+                <Card
+                  key={post.id}
+                  className="mx-auto my-2"
+                  style={{
+                    maxWidth: "30rem",
+                    border: "none",
+                    padding: "0",
+                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                  }}
+                >
+                  <Card.Img variant="top" src={post.imageUrl} />
+                  <Card.Body>
+                  {post.post_status === true && (
+                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    )}
+                    <Card.Title>{post.user_name}</Card.Title>
+                    <Card.Text>
+                      <p>{post.text}</p>
+                    </Card.Text>
+                    <img
+                      src={post.groupImage}
+                      alt="group representation"
+                      style={{
+                        width: "6vh",
+                        borderRadius: "100px",
+                        marginRight: "2vh",
+                      }}
+                    />
+                 
+                    {user_id && user_id === post.user_id && (
+                      <Button
+                        variant="outline-dark"
+                        onClick={() => deleteItem(post.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </Card.Body>
+                </Card>
+              );else { return null;}
+            })}
+          </Row>
         )}
       </Container>
     </Container>

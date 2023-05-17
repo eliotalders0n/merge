@@ -50,6 +50,8 @@ function Profile(props) {
   const Group = useGetGroup(user_.group).docs;
   const user_id = firebase.auth().currentUser.uid
 
+  console.log("user group" + Group);
+
   return (
     <Container fluid>
       <Head />
@@ -67,7 +69,7 @@ function Profile(props) {
             filter: "grayscale(75%)",
             backgroundSize: "cover",
             color: "black",
-            height: "70vh",
+            height: "auto",
           }}
         >
           <Card.Body>
@@ -76,37 +78,37 @@ function Profile(props) {
             <Form className="my-3">
             <Form.Group as={Col} controlId="formGridEmail">
                   <Form.Label>Full Name</Form.Label>
-                  <Form.Control readonly type="email" placeholder="Enter email" value={user_.firstName + " " +  user_.lastName} />
+                  <Form.Control readOnly type="email" placeholder="Enter email" value={user_.firstName + " " +  user_.lastName} />
                 </Form.Group>
 
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridEmail">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control readonly type="email" placeholder="Enter email" value={user_.email} />
+                  <Form.Control readOnly type="email" placeholder="Enter email" value={user_.email} />
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridPassword">
                   <Form.Label>Password</Form.Label>
-                  <Form.Control readonly type="password" placeholder="Password" value={user_.password} />
+                  <Form.Control readOnly type="password" placeholder="Password" value={user_.password} />
                 </Form.Group>
               </Row>
 
               <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridAddress1">
                 <Form.Label>Address</Form.Label>
-                <Form.Control readonly placeholder="1234 Main St" value={user_.address} />
+                <Form.Control readOnly placeholder="1234 Main St" value={user_.address} />
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridCity">
                   <Form.Label>Group</Form.Label>
-                  <Form.Control readonly placeholder='14' value={Group.name}/>
+                  <Form.Control readOnly placeholder='14' value={Group.name}/>
                 </Form.Group>
                 </Row>
                 
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridState">
                   <Form.Label>Gender</Form.Label>
-                  <Form.Select defaultValue={user_.gender}>
+                  <Form.Select disabled defaultValue={user_.gender}>
                     <option>{user_.gender}</option>
                     <option>Male</option>
                     <option>Female</option>
@@ -115,13 +117,13 @@ function Profile(props) {
 
                 <Form.Group as={Col} controlId="formGridZip">
                   <Form.Label>Age</Form.Label>
-                  <Form.Control readonly placeholder='20' value={user_.age}/>
+                  <Form.Control readOnly placeholder='20' value={user_.age}/>
                 </Form.Group>
               </Row>
 
 <p className="text-muted">We do not abuse or sell any information on this site. All information is strictly used by the church for record keeping and accountability</p>
               <Button variant="dark" onClick={() => Logout()}>
-                Submit
+                Logout
               </Button>
             </Form>
           </Card.Body>
