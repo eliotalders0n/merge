@@ -8,11 +8,12 @@ import {
   Card,
   Row,
   Form,
-  Badge
+  Badge,
 } from "react-bootstrap";
 import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
 import useGetGroup from "./hooks/useGetGroup";
+
 
 // fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
 
@@ -239,7 +240,7 @@ function Feed(props) {
           <Row>
             <Form.Control
               as="textarea"
-              placeholder="Enter your post text"
+              placeholder="for youtube videos just paste the link url"
               value={postText}
               onChange={handleTextChange}
             />
@@ -287,47 +288,115 @@ function Feed(props) {
           <Row>
             {Posts.filter((post) => post.group === Group.GroupNumber).map(
               (post) => {
-                return (
-                  <Card
-                    key={post.id}
-                    className="mx-auto my-2"
-                    style={{
-                      maxWidth: "30rem",
-                      border: "none",
-                      padding: "0",
-                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                    }}
-                  >
-                    <Card.Img variant="top" src={post.imageUrl} />
+                if (
+                  post.text &&
+                  post.text.startsWith("https://youtu.be")
+                ) {
+                  const videoUrl = post.text
+                  const videoId = videoUrl.substring(videoUrl.lastIndexOf('/') + 1);
+                  console.log("video : " + videoId)
+                  return (
+                    <Card
+                      key={post.id}
+                      className="mx-auto my-2"
+                      style={{
+                        maxWidth: "30rem",
+                        border: "none",
+                        padding: "0",
+                        boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                      }}
+                    >
+                    <iframe
+                      width="100%"
+                      height="auto"
+                      src={"https://www.youtube.com/embed/" + videoId}
+                      title="YouTube video player"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                    ></iframe>
                     <Card.Body>
-                    {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
-                    )}
-                      <Card.Title>{post.user_name}</Card.Title>
-                      <Card.Text>
-                        <p>{post.text}</p>
-                      </Card.Text>
-                      <img
-                        src={post.groupImage}
-                        alt="group representation"
-                        style={{
-                          width: "6vh",
-                          borderRadius: "100px",
-                          marginRight: "2vh",
-                        }}
-                      />
-                      
-                      {user_id && user_id === post.user_id && (
-                        <Button
-                          variant="outline-dark"
-                          onClick={() => deleteItem(post.id)}
-                        >
-                          Delete
-                        </Button>
-                      )}
-                    </Card.Body>
-                  </Card>
-                );
+                        {post.post_status === true && (
+                          <Badge
+                            bg="primary"
+                            style={{ padding: "8px", marginBottom: "8px" }}
+                          >
+                            Group {post.group} Only
+                          </Badge>
+                        )}
+                        <Card.Title>{post.user_name}</Card.Title>
+                        <Card.Text>
+                          <p>{post.text}</p>
+                        </Card.Text>
+                        <img
+                          src={post.groupImage}
+                          alt="group representation"
+                          style={{
+                            width: "6vh",
+                            borderRadius: "100px",
+                            marginRight: "2vh",
+                          }}
+                        />
+
+                        {user_id && user_id === post.user_id && (
+                          <Button
+                            variant="outline-dark"
+                            onClick={() => deleteItem(post.id)}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  );
+                } else
+                
+                  return (
+                    <Card
+                      key={post.id}
+                      className="mx-auto my-2"
+                      style={{
+                        maxWidth: "30rem",
+                        border: "none",
+                        padding: "0",
+                        boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                      }}
+                    >
+                      <Card.Img variant="top" src={post.imageUrl} />
+                      <Card.Body>
+                        {post.post_status === true && (
+                          <Badge
+                            bg="primary"
+                            style={{ padding: "8px", marginBottom: "8px" }}
+                          >
+                            Group {post.group} Only
+                          </Badge>
+                        )}
+                        <Card.Title>{post.user_name}</Card.Title>
+                        <Card.Text>
+                          <p>{post.text}</p>
+                        </Card.Text>
+                        <img
+                          src={post.groupImage}
+                          alt="group representation"
+                          style={{
+                            width: "6vh",
+                            borderRadius: "100px",
+                            marginRight: "2vh",
+                          }}
+                        />
+
+                        {user_id && user_id === post.user_id && (
+                          <Button
+                            variant="outline-dark"
+                            onClick={() => deleteItem(post.id)}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  );
               }
             )}
           </Row>
@@ -349,15 +418,28 @@ function Feed(props) {
                 >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
-                  {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    {post.post_status === true && (
+                      <Badge
+                        bg="primary"
+                        style={{ padding: "8px", marginBottom: "8px" }}
+                      >
+                        Group {post.group} Only
+                      </Badge>
                     )}
                     <Card.Title>{post.user_name}</Card.Title>
+                    <Badge
+                      bg="dark"
+                      style={{ padding: "8px", marginBottom: "8px" }}
+                    >
+                      {" "}
+                      {post.postType}{" "}
+                    </Badge>
                     <Card.Text>
                       <p>{post.text}</p>
+                      <p className="text-muted">Date : {post.startDate}</p>
                     </Card.Text>
                     <img
-                      src={post.groupImage}
+                      src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
                       alt="group representation"
                       style={{
                         width: "6vh",
@@ -396,15 +478,28 @@ function Feed(props) {
                 >
                   <Card.Img variant="top" src={post.imageUrl} />
                   <Card.Body>
-                  {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
+                    {post.post_status === true && (
+                      <Badge
+                        bg="primary"
+                        style={{ padding: "8px", marginBottom: "8px" }}
+                      >
+                        Group {post.group} Only
+                      </Badge>
                     )}
                     <Card.Title>{post.user_name}</Card.Title>
+                    <Badge
+                      bg="dark"
+                      style={{ padding: "8px", marginBottom: "8px" }}
+                    >
+                      {" "}
+                      {post.postType}{" "}
+                    </Badge>
                     <Card.Text>
                       <p>{post.text}</p>
+                      <p className="text-muted">Date : {post.startDate}</p>
                     </Card.Text>
                     <img
-                      src={post.groupImage}
+                      src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
                       alt="group representation"
                       style={{
                         width: "6vh",
@@ -445,9 +540,14 @@ function Feed(props) {
                   >
                     <Card.Img variant="top" src={post.imageUrl} />
                     <Card.Body>
-                    {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
-                    )}
+                      {post.post_status === true && (
+                        <Badge
+                          bg="primary"
+                          style={{ padding: "8px", marginBottom: "8px" }}
+                        >
+                          Group {post.group} Only
+                        </Badge>
+                      )}
                       <Card.Title>{post.user_name}</Card.Title>
                       <Card.Text>
                         <p>{post.text}</p>
@@ -472,7 +572,9 @@ function Feed(props) {
                     </Card.Body>
                   </Card>
                 );
-              } else { return null;}
+              } else {
+                return null;
+              }
             })}
           </Row>
         )}
@@ -481,47 +583,63 @@ function Feed(props) {
           <Row>
             {Posts.filter((post) => post.postType === "event").map((post) => {
               if (!post.post_status)
-              return (
-                <Card
-                  key={post.id}
-                  className="mx-auto my-2"
-                  style={{
-                    maxWidth: "30rem",
-                    border: "none",
-                    padding: "0",
-                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                  }}
-                >
-                  <Card.Img variant="top" src={post.imageUrl} />
-                  <Card.Body>
-                  {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
-                    )}
-                    <Card.Title>{post.user_name}</Card.Title>
-                    <Card.Text>
-                      <p>{post.text}</p>
-                    </Card.Text>
-                    <img
-                      src={post.groupImage}
-                      alt="group representation"
-                      style={{
-                        width: "6vh",
-                        borderRadius: "100px",
-                        marginRight: "2vh",
-                      }}
-                    />
-    
-                    {user_id && user_id === post.user_id && (
-                      <Button
-                        variant="outline-dark"
-                        onClick={() => deleteItem(post.id)}
+                return (
+                  <Card
+                    key={post.id}
+                    className="mx-auto my-2"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                      {post.post_status === true && (
+                        <Badge
+                          bg="primary"
+                          style={{ padding: "8px", marginBottom: "8px" }}
+                        >
+                          Group {post.group} Only
+                        </Badge>
+                      )}
+                      <Card.Title>{post.user_name}</Card.Title>
+                      <Badge
+                        bg="dark"
+                        style={{ padding: "8px", marginBottom: "8px" }}
                       >
-                        Delete
-                      </Button>
-                    )}
-                  </Card.Body>
-                </Card>
-              ); else { return null;}
+                        {" "}
+                        {post.postType}{" "}
+                      </Badge>
+                      <Card.Text>
+                        <p>{post.text}</p>
+                        <p className="text-muted">Date : {post.startDate}</p>
+                      </Card.Text>
+                      <img
+                        src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
+                        alt="group representation"
+                        style={{
+                          width: "6vh",
+                          borderRadius: "100px",
+                          marginRight: "2vh",
+                        }}
+                      />
+
+                      {user_id && user_id === post.user_id && (
+                        <Button
+                          variant="outline-dark"
+                          onClick={() => deleteItem(post.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </Card.Body>
+                  </Card>
+                );
+              else {
+                return null;
+              }
             })}
           </Row>
         )}
@@ -530,47 +648,63 @@ function Feed(props) {
           <Row>
             {Posts.filter((post) => post.postType === "serve").map((post) => {
               if (!post.post_status)
-              return (
-                <Card
-                  key={post.id}
-                  className="mx-auto my-2"
-                  style={{
-                    maxWidth: "30rem",
-                    border: "none",
-                    padding: "0",
-                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                  }}
-                >
-                  <Card.Img variant="top" src={post.imageUrl} />
-                  <Card.Body>
-                  {post.post_status === true && (
-                    <Badge bg="primary" style={{padding: "8px", marginBottom: "8px"}}>Group {post.group} Only</Badge>
-                    )}
-                    <Card.Title>{post.user_name}</Card.Title>
-                    <Card.Text>
-                      <p>{post.text}</p>
-                    </Card.Text>
-                    <img
-                      src={post.groupImage}
-                      alt="group representation"
-                      style={{
-                        width: "6vh",
-                        borderRadius: "100px",
-                        marginRight: "2vh",
-                      }}
-                    />
-                 
-                    {user_id && user_id === post.user_id && (
-                      <Button
-                        variant="outline-dark"
-                        onClick={() => deleteItem(post.id)}
+                return (
+                  <Card
+                    key={post.id}
+                    className="mx-auto my-2"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                      {post.post_status === true && (
+                        <Badge
+                          bg="primary"
+                          style={{ padding: "8px", marginBottom: "8px" }}
+                        >
+                          Group {post.group} Only
+                        </Badge>
+                      )}
+                      <Card.Title>{post.user_name}</Card.Title>
+                      <Badge
+                        bg="dark"
+                        style={{ padding: "8px", marginBottom: "8px" }}
                       >
-                        Delete
-                      </Button>
-                    )}
-                  </Card.Body>
-                </Card>
-              );else { return null;}
+                        {" "}
+                        {post.postType}{" "}
+                      </Badge>
+                      <Card.Text>
+                        <p>{post.text}</p>
+                        <p className="text-muted">Date : {post.startDate}</p>
+                      </Card.Text>
+                      <img
+                        src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
+                        alt="group representation"
+                        style={{
+                          width: "6vh",
+                          borderRadius: "100px",
+                          marginRight: "2vh",
+                        }}
+                      />
+
+                      {user_id && user_id === post.user_id && (
+                        <Button
+                          variant="outline-dark"
+                          onClick={() => deleteItem(post.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </Card.Body>
+                  </Card>
+                );
+              else {
+                return null;
+              }
             })}
           </Row>
         )}
