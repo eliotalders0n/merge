@@ -9,11 +9,13 @@ import {
   Row,
   Form,
   Badge,
+  Modal
+  // Toast
 } from "react-bootstrap";
 import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
 import useGetGroup from "./hooks/useGetGroup";
-
+import dayjs from "dayjs";
 
 // fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
 
@@ -110,6 +112,25 @@ function Feed(props) {
 
     getLocation();
   }, []);
+  // const [show, setShow] = useState(false);
+
+  // const showToast = () => {
+  //   setShow(true)
+  //   return (
+  //     <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
+  //         <Toast.Header>
+  //           <img
+  //             src="holder.js/20x20?text=%20"
+  //             className="rounded me-2"
+  //             alt=""
+  //           />
+  //           <strong className="me-auto">Bootstrap</strong>
+  //           <small>11 mins ago</small>
+  //         </Toast.Header>
+  //         <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+  //       </Toast>
+  //   )
+  // }
 
   const HandlePostSubmit = async () => {
     // 1. Create a new post document in Firestore
@@ -157,7 +178,7 @@ function Feed(props) {
         }
       );
     }
-
+    // showToast();
     setCheckboxValue(false);
     setImagePreview("");
     setImageFile(null);
@@ -174,6 +195,7 @@ function Feed(props) {
       .doc(id)
       .delete()
       .then(() => {
+        // showToast();
         alert("Post was deleted successfully");
       })
       .catch((e) => {
@@ -182,6 +204,11 @@ function Feed(props) {
   };
 
   // Reset form fields
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <Container
@@ -235,8 +262,15 @@ function Feed(props) {
       </Container>
 
       <Container className="d-flex justify-content-center">
+      <Button variant="outline-dark" style={{width: "100%"}} className="my-3" onClick={handleShow}>
+        Create Post
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title><h2 className="display-3">Tell us</h2></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
         <Row style={{ maxWidth: " 70vh" }}>
-          <h2>Tell us</h2>
           <Row>
             <Form.Control
               as="textarea"
@@ -275,12 +309,18 @@ function Feed(props) {
               style={{ width: uploadProgress + "%" }}
             ></div>
           </div>
-          <br />
-          <Button variant="outline-dark" onClick={HandlePostSubmit}>
-            Submit
-          </Button>
-          <br />
         </Row>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="outline-dark" onClick={HandlePostSubmit}>
+            Post
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       </Container>
 
       <Container fluid className="d-flex justify-content-center">
@@ -288,17 +328,22 @@ function Feed(props) {
           <Row>
             {Posts.filter((post) => post.group === Group.GroupNumber).map(
               (post) => {
-                if (
-                  post.text &&
-                  post.text.startsWith("https://youtu.be")
-                ) {
-                  const videoUrl = post.text
-                  const videoId = videoUrl.substring(videoUrl.lastIndexOf('/') + 1);
-                  console.log("video : " + videoId)
+                const jsDate = post.timestamp.toDate();
+                const formattedTimestamp =
+                  dayjs(jsDate).format("YYYY-MM-DD HH:mm");
+                const finalTimestamp = formattedTimestamp.substring(
+                  formattedTimestamp.indexOf(":") + -2
+                );
+                if (post.text && post.text.startsWith("https://youtu.be")) {
+                  const videoUrl = post.text;
+                  const videoId = videoUrl.substring(
+                    videoUrl.lastIndexOf("/") + 1
+                  );
+                  console.log("video : " + videoId);
                   return (
                     <Card
                       key={post.id}
-                      className="mx-auto my-2"
+                      className="mx-auto my-2 animate__animated animate__bounceInRight animate__slow animate__delay-1s"
                       style={{
                         maxWidth: "30rem",
                         border: "none",
@@ -306,16 +351,16 @@ function Feed(props) {
                         boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
                       }}
                     >
-                    <iframe
-                      width="100%"
-                      height="auto"
-                      src={"https://www.youtube.com/embed/" + videoId}
-                      title="YouTube video player"
-                      frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowfullscreen
-                    ></iframe>
-                    <Card.Body>
+                      <iframe
+                        width="100%"
+                        height="auto"
+                        src={"https://www.youtube.com/embed/" + videoId}
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                      ></iframe>
+                      <Card.Body>
                         {post.post_status === true && (
                           <Badge
                             bg="primary"
@@ -327,6 +372,7 @@ function Feed(props) {
                         <Card.Title>{post.user_name}</Card.Title>
                         <Card.Text>
                           <p>{post.text}</p>
+                          <p className="lead text-muted">{finalTimestamp}</p>
                         </Card.Text>
                         <img
                           src={post.groupImage}
@@ -350,11 +396,10 @@ function Feed(props) {
                     </Card>
                   );
                 } else
-                
                   return (
                     <Card
                       key={post.id}
-                      className="mx-auto my-2"
+                      className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                       style={{
                         maxWidth: "30rem",
                         border: "none",
@@ -375,6 +420,7 @@ function Feed(props) {
                         <Card.Title>{post.user_name}</Card.Title>
                         <Card.Text>
                           <p>{post.text}</p>
+                          <p className="lead text-muted">{finalTimestamp}</p>
                         </Card.Text>
                         <img
                           src={post.groupImage}
@@ -403,12 +449,12 @@ function Feed(props) {
         )}
 
         {body === "group" && activeFilter === "events" && (
-          <Row>
-            {Posts.filter((post) => post.postType === "event").map((post) => {
+          <Row> 
+            {Posts.filter((post) => post.postType === "event" && post.group === Group.GroupNumber).map((post) => {
               return (
                 <Card
                   key={post.id}
-                  className="mx-auto my-2"
+                  className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                   style={{
                     maxWidth: "30rem",
                     border: "none",
@@ -464,11 +510,11 @@ function Feed(props) {
 
         {body === "group" && activeFilter === "serve" && (
           <Row>
-            {Posts.filter((post) => post.postType === "serve").map((post) => {
+            {Posts.filter((post) => post.postType === "serve" && post.group === Group.GroupNumber).map((post) => {
               return (
                 <Card
                   key={post.id}
-                  className="mx-auto my-2"
+                  className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                   style={{
                     maxWidth: "30rem",
                     border: "none",
@@ -528,9 +574,15 @@ function Feed(props) {
           <Row>
             {Posts.map((post) => {
               if (!post.post_status) {
+                const jsDate = post.timestamp.toDate();
+                const formattedTimestamp =
+                  dayjs(jsDate).format("YYYY-MM-DD HH:mm");
+                const finalTimestamp = formattedTimestamp.substring(
+                  formattedTimestamp.indexOf(":") + -2
+                );
                 return (
                   <Card
-                    className="mx-auto my-2"
+                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                     style={{
                       maxWidth: "30rem",
                       border: "none",
@@ -551,6 +603,7 @@ function Feed(props) {
                       <Card.Title>{post.user_name}</Card.Title>
                       <Card.Text>
                         <p>{post.text}</p>
+                        <p className="lead text-muted">{finalTimestamp}</p>
                       </Card.Text>
                       <img
                         src={post.groupImage}
@@ -586,7 +639,7 @@ function Feed(props) {
                 return (
                   <Card
                     key={post.id}
-                    className="mx-auto my-2"
+                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                     style={{
                       maxWidth: "30rem",
                       border: "none",
@@ -651,7 +704,7 @@ function Feed(props) {
                 return (
                   <Card
                     key={post.id}
-                    className="mx-auto my-2"
+                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
                     style={{
                       maxWidth: "30rem",
                       border: "none",
