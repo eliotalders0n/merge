@@ -210,17 +210,20 @@ function Feed(props) {
 
   // Reset form fields
 
-
-
   return (
     <Container
       fluid
       style={{ backgroundColor: "rgb(220,220,220)", marginBottom: "10vh" }}
     >
-      <p className="display-3 text-center">Hey {user_details.firstName}</p>
+      <p className="display-3 text-center">
+        Hey {user_details.firstName}{" "}
+        <Badge bg="dark" style={{ padding: "6px", marginBottom: "4px" }}>
+          Verified
+        </Badge>
+      </p>
       <Head />
       <Container className="d-flex justify-content-center my-2">
-        <ButtonGroup>
+        <ButtonGroup style={{ width: "100%" }}>
           {radios.map((radio, idx) => (
             <ToggleButton
               key={idx}
@@ -242,21 +245,24 @@ function Feed(props) {
       <Container className="d-flex justify-content-center">
         <Button
           variant="outline-dark"
-          className="mx-2"
+          className="mx-1"
+          style={{ height: "12vh", width: "20vh" }}
           onClick={() => handleFilterClick("social")}
         >
           Social
         </Button>
         <Button
           variant="outline-dark"
-          className="mx-2"
+          className="mx-1"
+          style={{ height: "12vh", width: "20vh" }}
           onClick={() => handleFilterClick("events")}
         >
           Events
         </Button>
         <Button
           variant="outline-dark"
-          className="mx-2"
+          className="mx-1"
+          style={{ height: "12vh", width: "20vh" }}
           onClick={() => handleFilterClick("serve")}
         >
           Serve
