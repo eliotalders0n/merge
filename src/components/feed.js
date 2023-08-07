@@ -6,10 +6,12 @@ import {
   ButtonGroup,
   ToggleButton,
   Card,
+  Col,
   Row,
   Form,
   Badge,
   Modal,
+  InputGroup
   // Toast
 } from "react-bootstrap";
 import firebase from "./../firebase";
@@ -27,6 +29,11 @@ function Feed(props) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [showShare, setShowShare] = useState(false);
+
+  const handleShareClose = () => setShowShare(false);
+  const handleShareShow = () => setShowShare(true);
 
   const radios = [
     { name: "Group", value: "group" },
@@ -217,7 +224,14 @@ function Feed(props) {
     >
       <p className="display-3 text-center">
         Hey {user_details.firstName}{" "}
-        <Badge bg="dark" style={{ padding: "6px", marginBottom: "4px" }}>
+        <Badge
+          bg="dark"
+          style={{
+            padding: "6px 8px",
+            marginBottom: "4px",
+            marginLeft: "20px",
+          }}
+        >
           Verified
         </Badge>
       </p>
@@ -397,15 +411,54 @@ function Feed(props) {
                             marginRight: "2vh",
                           }}
                         />
-
-                        {user_id && user_id === post.user_id && (
-                          <Button
-                            variant="outline-dark"
-                            onClick={() => deleteItem(post.id)}
-                          >
-                            Delete
-                          </Button>
-                        )}
+                        <Row style={{ marginTop: "14px" }}>
+                          <Col>
+                            <img
+                              src={post.groupImage}
+                              alt="group representation"
+                              style={{
+                                width: "6vh",
+                                borderRadius: "100px",
+                                marginRight: "2vh",
+                              }}
+                            />
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-share-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-heart-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-chat-fill"></i>
+                            </Button>
+                          </Col>
+                          {user_id && user_id === post.user_id && (
+                            <Col>
+                              <Button
+                                variant="outline-dark"
+                                onClick={() => deleteItem(post.id)}
+                                style={{ marginTop: "14px" }}
+                              >
+                                <i class="bi bi-trash-fill"></i>
+                              </Button>
+                            </Col>
+                          )}
+                        </Row>
                       </Card.Body>
                     </Card>
                   );
@@ -436,24 +489,56 @@ function Feed(props) {
                           <p>{post.text}</p>
                           <p className="lead text-muted">{finalTimestamp}</p>
                         </Card.Text>
-                        <img
-                          src={post.groupImage}
-                          alt="group representation"
-                          style={{
-                            width: "6vh",
-                            borderRadius: "100px",
-                            marginRight: "2vh",
-                          }}
-                        />
 
-                        {user_id && user_id === post.user_id && (
-                          <Button
-                            variant="outline-dark"
-                            onClick={() => deleteItem(post.id)}
-                          >
-                            Delete
-                          </Button>
-                        )}
+                        <Row style={{ marginTop: "14px" }}>
+                          <Col>
+                            <img
+                              src={post.groupImage}
+                              alt="group representation"
+                              style={{
+                                width: "6vh",
+                                borderRadius: "100px",
+                                marginRight: "2vh",
+                              }}
+                            />
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                              onClick={handleShareShow}
+                            >
+                              <i class="bi bi-share-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-heart-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-chat-fill"></i>
+                            </Button>
+                          </Col>
+                          {user_id && user_id === post.user_id && (
+                            <Col>
+                              <Button
+                                variant="outline-dark"
+                                onClick={() => deleteItem(post.id)}
+                                style={{ marginTop: "14px" }}
+                              >
+                                <i class="bi bi-trash-fill"></i>
+                              </Button>
+                            </Col>
+                          )}
+                        </Row>
                       </Card.Body>
                     </Card>
                   );
@@ -501,23 +586,54 @@ function Feed(props) {
                       <p>{post.text}</p>
                       <p className="text-muted">Date : {post.startDate}</p>
                     </Card.Text>
-                    <img
-                      src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
-                      alt="group representation"
-                      style={{
-                        width: "6vh",
-                        borderRadius: "100px",
-                        marginRight: "2vh",
-                      }}
-                    />
-                    {user_id && user_id === post.user_id && (
-                      <Button
-                        variant="outline-dark"
-                        onClick={() => deleteItem(post.id)}
-                      >
-                        Delete
-                      </Button>
-                    )}
+                    <Row style={{ marginTop: "14px" }}>
+                      <Col>
+                        <img
+                          src={post.groupImage}
+                          alt="group representation"
+                          style={{
+                            width: "6vh",
+                            borderRadius: "100px",
+                            marginRight: "2vh",
+                          }}
+                        />
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-share-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-heart-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-chat-fill"></i>
+                        </Button>
+                      </Col>
+                      {user_id && user_id === post.user_id && (
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            onClick={() => deleteItem(post.id)}
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-trash-fill"></i>
+                          </Button>
+                        </Col>
+                      )}
+                    </Row>
                   </Card.Body>
                 </Card>
               );
@@ -564,24 +680,54 @@ function Feed(props) {
                       <p>{post.text}</p>
                       <p className="text-muted">Date : {post.startDate}</p>
                     </Card.Text>
-                    <img
-                      src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
-                      alt="group representation"
-                      style={{
-                        width: "6vh",
-                        borderRadius: "100px",
-                        marginRight: "2vh",
-                      }}
-                    />
-
-                    {user_id && user_id === post.user_id && (
-                      <Button
-                        variant="outline-dark"
-                        onClick={() => deleteItem(post.id)}
-                      >
-                        Delete
-                      </Button>
-                    )}
+                    <Row style={{ marginTop: "14px" }}>
+                      <Col>
+                        <img
+                          src={post.groupImage}
+                          alt="group representation"
+                          style={{
+                            width: "6vh",
+                            borderRadius: "100px",
+                            marginRight: "2vh",
+                          }}
+                        />
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-share-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-heart-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                        >
+                          <i class="bi bi-chat-fill"></i>
+                        </Button>
+                      </Col>
+                      {user_id && user_id === post.user_id && (
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            onClick={() => deleteItem(post.id)}
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-trash-fill"></i>
+                          </Button>
+                        </Col>
+                      )}
+                    </Row>
                   </Card.Body>
                 </Card>
               );
@@ -626,23 +772,54 @@ function Feed(props) {
                         <p>{post.text}</p>
                         <p className="lead text-muted">{finalTimestamp}</p>
                       </Card.Text>
-                      <img
-                        src={post.groupImage}
-                        alt="group representation"
-                        style={{
-                          width: "6vh",
-                          borderRadius: "100px",
-                          marginRight: "2vh",
-                        }}
-                      />
-                      {user_id && user_id === post.user_id && (
-                        <Button
-                          variant="outline-dark"
-                          onClick={() => deleteItem(post.id)}
-                        >
-                          Delete
-                        </Button>
-                      )}
+                      <Row style={{ marginTop: "14px" }}>
+                        <Col>
+                          <img
+                            src={post.groupImage}
+                            alt="group representation"
+                            style={{
+                              width: "6vh",
+                              borderRadius: "100px",
+                              marginRight: "2vh",
+                            }}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-heart-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-chat-fill"></i>
+                          </Button>
+                        </Col>
+                        {user_id && user_id === post.user_id && (
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              onClick={() => deleteItem(post.id)}
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-trash-fill"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
                     </Card.Body>
                   </Card>
                 );
@@ -690,24 +867,54 @@ function Feed(props) {
                         <p>{post.text}</p>
                         <p className="text-muted">Date : {post.startDate}</p>
                       </Card.Text>
-                      <img
-                        src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
-                        alt="group representation"
-                        style={{
-                          width: "6vh",
-                          borderRadius: "100px",
-                          marginRight: "2vh",
-                        }}
-                      />
-
-                      {user_id && user_id === post.user_id && (
-                        <Button
-                          variant="outline-dark"
-                          onClick={() => deleteItem(post.id)}
-                        >
-                          Delete
-                        </Button>
-                      )}
+                      <Row style={{ marginTop: "14px" }}>
+                        <Col>
+                          <img
+                            src={post.groupImage}
+                            alt="group representation"
+                            style={{
+                              width: "6vh",
+                              borderRadius: "100px",
+                              marginRight: "2vh",
+                            }}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-heart-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-chat-fill"></i>
+                          </Button>
+                        </Col>
+                        {user_id && user_id === post.user_id && (
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              onClick={() => deleteItem(post.id)}
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-trash-fill"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
                     </Card.Body>
                   </Card>
                 );
@@ -755,24 +962,54 @@ function Feed(props) {
                         <p>{post.text}</p>
                         <p className="text-muted">Date : {post.startDate}</p>
                       </Card.Text>
-                      <img
-                        src="./assets/344741779_633096014894033_8998160269009553873_n.jpg"
-                        alt="group representation"
-                        style={{
-                          width: "6vh",
-                          borderRadius: "100px",
-                          marginRight: "2vh",
-                        }}
-                      />
-
-                      {user_id && user_id === post.user_id && (
-                        <Button
-                          variant="outline-dark"
-                          onClick={() => deleteItem(post.id)}
-                        >
-                          Delete
-                        </Button>
-                      )}
+                      <Row style={{ marginTop: "14px" }}>
+                        <Col>
+                          <img
+                            src={post.groupImage}
+                            alt="group representation"
+                            style={{
+                              width: "6vh",
+                              borderRadius: "100px",
+                              marginRight: "2vh",
+                            }}
+                          />
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-heart-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i class="bi bi-chat-fill"></i>
+                          </Button>
+                        </Col>
+                        {user_id && user_id === post.user_id && (
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              onClick={() => deleteItem(post.id)}
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i class="bi bi-trash-fill"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
                     </Card.Body>
                   </Card>
                 );
@@ -783,6 +1020,56 @@ function Feed(props) {
           </Row>
         )}
       </Container>
+      <Modal show={showShare} onHide={handleShareClose}>
+        <Modal.Header>
+          <Modal.Title>
+            <img
+              src="assets/344741779_633096014894033_8998160269009553873_n.jpg"
+              style={{ width: "100%", borderRadius: "10px" }}
+              alt="just a test"
+            />
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h4 className="display-6 text-center">
+            Share this with your social Community!
+            <br />
+            <br />
+            <Row>
+              <Col>
+                <i class="bi bi-facebook"></i>
+              </Col>
+              <Col>
+                <i class="bi bi-whatsapp"></i>
+              </Col>
+              <Col>
+                <i class="bi bi-twitter"></i>
+              </Col>
+              <Col>
+                <i class="bi bi-instagram"></i>
+              </Col>
+            </Row>
+          </h4>
+          <br />
+          <br />
+          <p className="lead">or copy link</p>
+          <InputGroup className="mb-3">
+            <Form.Control
+              placeholder="https://mergesocial.web.app/user/avh16813dc"
+              aria-label="Recipient's username"
+              aria-describedby="basic-addon2"
+            />
+            <Button variant="outline-dark" id="button-addon2">
+              Copy
+            </Button>
+          </InputGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleShareClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
