@@ -9,7 +9,7 @@ import {
   Row,
   Form,
   Badge,
-  Modal
+  Modal,
   // Toast
 } from "react-bootstrap";
 import firebase from "./../firebase";
@@ -23,6 +23,10 @@ function Feed(props) {
   const [body, setBody] = useState("group");
   const [activeFilter, setActiveFilter] = useState("social");
   const [radioValue, setRadioValue] = useState("group");
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const radios = [
     { name: "Group", value: "group" },
@@ -183,6 +187,7 @@ function Feed(props) {
     setImagePreview("");
     setImageFile(null);
     setPostText("");
+    handleClose();
   };
 
   const Posts = useGetPosts().docs;
@@ -205,10 +210,7 @@ function Feed(props) {
 
   // Reset form fields
 
-  const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   return (
     <Container
@@ -262,65 +264,71 @@ function Feed(props) {
       </Container>
 
       <Container className="d-flex justify-content-center">
-      <Button variant="outline-dark" style={{width: "100%"}} className="my-3" onClick={handleShow}>
-        Create Post
-      </Button>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title><h2 className="display-3">Tell us</h2></Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Row style={{ maxWidth: " 70vh" }}>
-          <Row>
-            <Form.Control
-              as="textarea"
-              placeholder="for youtube videos just paste the link url"
-              value={postText}
-              onChange={handleTextChange}
-            />
-            <Form.Control
-              className="my-1"
-              type="file"
-              onChange={handleImageChange}
-            />
-            <Form.Check
-              checked={checkboxValue}
-              onChange={handleCheckboxChange}
-              type="checkbox"
-              label="Group Only"
-              id="post-status"
-            />
-            <br />
-            {imagePreview && (
-              <img
-                style={{ maxWidth: " 30vh" }}
-                src={imagePreview}
-                alt=" post state"
-              />
-            )}
-          </Row>
-          <div className="progress my-2">
-            <div
-              className="progress-bar progress-bar-striped progress-bar-animated"
-              role="progressbar"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100"
-              style={{ width: uploadProgress + "%" }}
-            ></div>
-          </div>
-        </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="outline-dark" onClick={HandlePostSubmit}>
-            Post
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
+        <Button
+          variant="outline-dark"
+          style={{ width: "100%" }}
+          className="my-3"
+          onClick={handleShow}
+        >
+          Create Post
+        </Button>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <h2 className="display-3">Tell us</h2>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row style={{ maxWidth: " 70vh" }}>
+              <Row>
+                <Form.Control
+                  as="textarea"
+                  placeholder="for youtube videos just paste the link url"
+                  value={postText}
+                  onChange={handleTextChange}
+                />
+                <Form.Control
+                  className="my-1"
+                  type="file"
+                  onChange={handleImageChange}
+                />
+                <Form.Check
+                  checked={checkboxValue}
+                  onChange={handleCheckboxChange}
+                  type="checkbox"
+                  label="Group Only"
+                  id="post-status"
+                />
+                <br />
+                {imagePreview && (
+                  <img
+                    style={{ maxWidth: " 30vh" }}
+                    src={imagePreview}
+                    alt=" post state"
+                  />
+                )}
+              </Row>
+              <div className="progress my-2">
+                <div
+                  className="progress-bar progress-bar-striped progress-bar-animated"
+                  role="progressbar"
+                  aria-valuenow="0"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style={{ width: uploadProgress + "%" }}
+                ></div>
+              </div>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="outline-dark" onClick={HandlePostSubmit}>
+              Post
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
 
       <Container fluid className="d-flex justify-content-center">
@@ -328,12 +336,11 @@ function Feed(props) {
           <Row>
             {Posts.filter((post) => post.group === Group.GroupNumber).map(
               (post) => {
-                const jsDate = post.timestamp.toDate();
+                // const jsDate = post.timestamp.toDate();
+                const jsDate = post.timestamp?.toDate();
                 const formattedTimestamp =
                   dayjs(jsDate).format("YYYY-MM-DD HH:mm");
-                const finalTimestamp = formattedTimestamp.substring(
-                  formattedTimestamp.indexOf(":") + -2
-                );
+                const finalTimestamp = formattedTimestamp.substring();
                 if (post.text && post.text.startsWith("https://youtu.be")) {
                   const videoUrl = post.text;
                   const videoId = videoUrl.substring(
@@ -360,6 +367,7 @@ function Feed(props) {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen
                       ></iframe>
+
                       <Card.Body>
                         {post.post_status === true && (
                           <Badge
@@ -449,8 +457,11 @@ function Feed(props) {
         )}
 
         {body === "group" && activeFilter === "events" && (
-          <Row> 
-            {Posts.filter((post) => post.postType === "event" && post.group === Group.GroupNumber).map((post) => {
+          <Row>
+            {Posts.filter(
+              (post) =>
+                post.postType === "event" && post.group === Group.GroupNumber
+            ).map((post) => {
               return (
                 <Card
                   key={post.id}
@@ -510,7 +521,10 @@ function Feed(props) {
 
         {body === "group" && activeFilter === "serve" && (
           <Row>
-            {Posts.filter((post) => post.postType === "serve" && post.group === Group.GroupNumber).map((post) => {
+            {Posts.filter(
+              (post) =>
+                post.postType === "serve" && post.group === Group.GroupNumber
+            ).map((post) => {
               return (
                 <Card
                   key={post.id}
@@ -574,7 +588,8 @@ function Feed(props) {
           <Row>
             {Posts.map((post) => {
               if (!post.post_status) {
-                const jsDate = post.timestamp.toDate();
+                // const jsDate = post.timestamp.toDate();
+                const jsDate = post.timestamp?.toDate();
                 const formattedTimestamp =
                   dayjs(jsDate).format("YYYY-MM-DD HH:mm");
                 const finalTimestamp = formattedTimestamp.substring(
