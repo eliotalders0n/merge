@@ -18,7 +18,12 @@ import firebase from "./../firebase";
 import useGetPosts from "./hooks/useGetPosts";
 import useGetGroup from "./hooks/useGetGroup";
 import dayjs from "dayjs";
-
+import {
+  TwitterShareButton,
+  WhatsappShareButton,
+  FacebookShareButton,
+  TelegramShareButton,
+} from "react-share";
 // fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
 
 function Feed(props) {
@@ -157,6 +162,7 @@ function Feed(props) {
       longitude: longitude,
       latitude: latitude,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      likedByCurrentUser: false,
     };
     const postRef = await postsCollection.add(newPost);
 
@@ -216,6 +222,34 @@ function Feed(props) {
   };
 
   // Reset form fields
+
+  // like feature
+
+  const [liked, setLiked] = useState(false);
+
+  const handleLikeClick = (id) => {
+    if (liked) {
+      // User wants to unlike the post
+      firebase
+        .firestore()
+        .collection("posts")
+        .doc(id)
+        .update({ likedByCurrentUser: "false" });
+      setLiked(false);
+      console.log("like status : false");
+    } else {
+      // User wants to like the post
+      firebase
+        .firestore()
+        .collection("posts")
+        .doc(id)
+        .update({ likedByCurrentUser: "true" });
+      // Update the likes count on the backend and setLiked to true
+      setLiked(true);
+      console.log("like status : true");
+    }
+  };
+  // like feature end
 
   return (
     <Container
@@ -428,7 +462,21 @@ function Feed(props) {
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-share-fill"></i>
+                              <i className="bi bi-share-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                              onClick={() => handleLikeClick(post.id)}
+                              // disabled={liked}
+                            >
+                              {post.likedByCurrentUser ? (
+                                <i className="bi bi-heart-fill"></i>
+                              ) : (
+                                <i className="bi bi-heart"></i>
+                              )}
                             </Button>
                           </Col>
                           <Col>
@@ -436,15 +484,7 @@ function Feed(props) {
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-heart-fill"></i>
-                            </Button>
-                          </Col>
-                          <Col>
-                            <Button
-                              variant="outline-dark"
-                              style={{ marginTop: "14px" }}
-                            >
-                              <i class="bi bi-chat-fill"></i>
+                              <i className="bi bi-chat-fill"></i>
                             </Button>
                           </Col>
                           {user_id && user_id === post.user_id && (
@@ -454,7 +494,7 @@ function Feed(props) {
                                 onClick={() => deleteItem(post.id)}
                                 style={{ marginTop: "14px" }}
                               >
-                                <i class="bi bi-trash-fill"></i>
+                                <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
                           )}
@@ -508,7 +548,21 @@ function Feed(props) {
                               style={{ marginTop: "14px" }}
                               onClick={handleShareShow}
                             >
-                              <i class="bi bi-share-fill"></i>
+                              <i className="bi bi-share-fill"></i>
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                              onClick={() => handleLikeClick(post.id)}
+                              // disabled={liked}
+                            >
+                              {post.likedByCurrentUser ? (
+                                <i className="bi bi-heart-fill"></i>
+                              ) : (
+                                <i className="bi bi-heart"></i>
+                              )}
                             </Button>
                           </Col>
                           <Col>
@@ -516,15 +570,7 @@ function Feed(props) {
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-heart-fill"></i>
-                            </Button>
-                          </Col>
-                          <Col>
-                            <Button
-                              variant="outline-dark"
-                              style={{ marginTop: "14px" }}
-                            >
-                              <i class="bi bi-chat-fill"></i>
+                              <i className="bi bi-chat-fill"></i>
                             </Button>
                           </Col>
                           {user_id && user_id === post.user_id && (
@@ -534,11 +580,12 @@ function Feed(props) {
                                 onClick={() => deleteItem(post.id)}
                                 style={{ marginTop: "14px" }}
                               >
-                                <i class="bi bi-trash-fill"></i>
+                                <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
                           )}
                         </Row>
+                      {/* add comment section */}
                       </Card.Body>
                     </Card>
                   );
@@ -604,7 +651,21 @@ function Feed(props) {
                           style={{ marginTop: "14px" }}
                           onClick={handleShareShow}
                         >
-                          <i class="bi bi-share-fill"></i>
+                          <i className="bi bi-share-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                          onClick={() => handleLikeClick(post.id)}
+                          // disabled={liked}
+                        >
+                          {post.likedByCurrentUser ? (
+                            <i className="bi bi-heart-fill"></i>
+                          ) : (
+                            <i className="bi bi-heart"></i>
+                          )}
                         </Button>
                       </Col>
                       <Col>
@@ -612,15 +673,7 @@ function Feed(props) {
                           variant="outline-dark"
                           style={{ marginTop: "14px" }}
                         >
-                          <i class="bi bi-heart-fill"></i>
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                        >
-                          <i class="bi bi-chat-fill"></i>
+                          <i className="bi bi-chat-fill"></i>
                         </Button>
                       </Col>
                       {user_id && user_id === post.user_id && (
@@ -630,7 +683,7 @@ function Feed(props) {
                             onClick={() => deleteItem(post.id)}
                             style={{ marginTop: "14px" }}
                           >
-                            <i class="bi bi-trash-fill"></i>
+                            <i className="bi bi-trash-fill"></i>
                           </Button>
                         </Col>
                       )}
@@ -699,7 +752,21 @@ function Feed(props) {
                           style={{ marginTop: "14px" }}
                           onClick={handleShareShow}
                         >
-                          <i class="bi bi-share-fill"></i>
+                          <i className="bi bi-share-fill"></i>
+                        </Button>
+                      </Col>
+                      <Col>
+                        <Button
+                          variant="outline-dark"
+                          style={{ marginTop: "14px" }}
+                          onClick={() => handleLikeClick(post.id)}
+                          // disabled={liked}
+                        >
+                          {post.likedByCurrentUser ? (
+                            <i className="bi bi-heart-fill"></i>
+                          ) : (
+                            <i className="bi bi-heart"></i>
+                          )}
                         </Button>
                       </Col>
                       <Col>
@@ -707,15 +774,7 @@ function Feed(props) {
                           variant="outline-dark"
                           style={{ marginTop: "14px" }}
                         >
-                          <i class="bi bi-heart-fill"></i>
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                        >
-                          <i class="bi bi-chat-fill"></i>
+                          <i className="bi bi-chat-fill"></i>
                         </Button>
                       </Col>
                       {user_id && user_id === post.user_id && (
@@ -725,7 +784,7 @@ function Feed(props) {
                             onClick={() => deleteItem(post.id)}
                             style={{ marginTop: "14px" }}
                           >
-                            <i class="bi bi-trash-fill"></i>
+                            <i className="bi bi-trash-fill"></i>
                           </Button>
                         </Col>
                       )}
@@ -792,7 +851,21 @@ function Feed(props) {
                             style={{ marginTop: "14px" }}
                             onClick={handleShareShow}
                           >
-                            <i class="bi bi-share-fill"></i>
+                            <i className="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                            onClick={() => handleLikeClick(post.id)}
+                            // disabled={liked}
+                          >
+                            {post.likedByCurrentUser ? (
+                              <i className="bi bi-heart-fill"></i>
+                            ) : (
+                              <i className="bi bi-heart"></i>
+                            )}
                           </Button>
                         </Col>
                         <Col>
@@ -800,15 +873,7 @@ function Feed(props) {
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
                           >
-                            <i class="bi bi-heart-fill"></i>
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                          >
-                            <i class="bi bi-chat-fill"></i>
+                            <i className="bi bi-chat-fill"></i>
                           </Button>
                         </Col>
                         {user_id && user_id === post.user_id && (
@@ -818,7 +883,7 @@ function Feed(props) {
                               onClick={() => deleteItem(post.id)}
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-trash-fill"></i>
+                              <i className="bi bi-trash-fill"></i>
                             </Button>
                           </Col>
                         )}
@@ -888,7 +953,21 @@ function Feed(props) {
                             style={{ marginTop: "14px" }}
                             onClick={handleShareShow}
                           >
-                            <i class="bi bi-share-fill"></i>
+                            <i className="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                            onClick={() => handleLikeClick(post.id)}
+                            // disabled={liked}
+                          >
+                            {post.likedByCurrentUser ? (
+                              <i className="bi bi-heart-fill"></i>
+                            ) : (
+                              <i className="bi bi-heart"></i>
+                            )}
                           </Button>
                         </Col>
                         <Col>
@@ -896,15 +975,7 @@ function Feed(props) {
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
                           >
-                            <i class="bi bi-heart-fill"></i>
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                          >
-                            <i class="bi bi-chat-fill"></i>
+                            <i className="bi bi-chat-fill"></i>
                           </Button>
                         </Col>
                         {user_id && user_id === post.user_id && (
@@ -914,10 +985,9 @@ function Feed(props) {
                               onClick={() => deleteItem(post.id)}
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-trash-fill"></i>
+                              <i className="bi bi-trash-fill"></i>
                             </Button>
                           </Col>
-                          
                         )}
                       </Row>
                     </Card.Body>
@@ -985,7 +1055,21 @@ function Feed(props) {
                             style={{ marginTop: "14px" }}
                             onClick={handleShareShow}
                           >
-                            <i class="bi bi-share-fill"></i>
+                            <i className="bi bi-share-fill"></i>
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                            onClick={() => handleLikeClick(post.id)}
+                            // disabled={liked}
+                          >
+                            {post.likedByCurrentUser ? (
+                              <i className="bi bi-heart-fill"></i>
+                            ) : (
+                              <i className="bi bi-heart"></i>
+                            )}
                           </Button>
                         </Col>
                         <Col>
@@ -993,15 +1077,7 @@ function Feed(props) {
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
                           >
-                            <i class="bi bi-heart-fill"></i>
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                          >
-                            <i class="bi bi-chat-fill"></i>
+                            <i className="bi bi-chat-fill"></i>
                           </Button>
                         </Col>
                         {user_id && user_id === post.user_id && (
@@ -1011,7 +1087,7 @@ function Feed(props) {
                               onClick={() => deleteItem(post.id)}
                               style={{ marginTop: "14px" }}
                             >
-                              <i class="bi bi-trash-fill"></i>
+                              <i className="bi bi-trash-fill"></i>
                             </Button>
                           </Col>
                         )}
@@ -1043,16 +1119,39 @@ function Feed(props) {
             <br />
             <Row>
               <Col>
-                <i class="bi bi-facebook"></i>
+                <FacebookShareButton
+                  url="https://mergesocial.web.app/"
+                  quote="Merge Social. Come check us out at merge every Sunday 1pm to 2:30pm!"
+                >
+                  <i className="bi bi-facebook"></i>
+                </FacebookShareButton>
               </Col>
               <Col>
-                <i class="bi bi-whatsapp"></i>
+                <WhatsappShareButton
+                  url="https://mergesocial.web.app/"
+                  title="Merge Social "
+                  separator=" Come check us out at merge every Sunday 1pm to 2:30pm! "
+                >
+                  <i className="bi bi-whatsapp"></i>
+                </WhatsappShareButton>
               </Col>
               <Col>
-                <i class="bi bi-twitter"></i>
+                <TwitterShareButton
+                  title="Merge Social"
+                  url={"https://mergesocial.web.app/"}
+                  via={"Come check us out at merge every Sunday 1pm to 2:30pm!"}
+                >
+                  <i className="bi bi-twitter"></i>
+                </TwitterShareButton>
               </Col>
               <Col>
-                <i class="bi bi-instagram"></i>
+                <TelegramShareButton
+                  url="https://mergesocial.web.app/"
+                  title="Merge Social"
+                  description="Come check us out at merge every Sunday 1pm to 2:30pm!"
+                >
+                  <i className="bi bi-telegram"></i>
+                </TelegramShareButton>
               </Col>
             </Row>
           </h4>
@@ -1061,11 +1160,19 @@ function Feed(props) {
           <p className="lead">or copy link</p>
           <InputGroup className="mb-3">
             <Form.Control
-              placeholder="https://mergesocial.web.app/user/ya12rsal"
+              placeholder="https://mergesocial.web.app/link"
               aria-label="Recipient's username"
               aria-describedby="basic-addon2"
             />
-            <Button variant="outline-dark" id="button-addon2">
+            <Button
+              variant="outline-dark"
+              id="button-addon2"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  "https://mergesocial.web.app/link"
+                );
+              }}
+            >
               Copy
             </Button>
           </InputGroup>
