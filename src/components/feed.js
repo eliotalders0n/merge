@@ -11,7 +11,7 @@ import {
   Form,
   Badge,
   Modal,
-  InputGroup
+  InputGroup,
   // Toast
 } from "react-bootstrap";
 import firebase from "./../firebase";
@@ -602,6 +602,7 @@ function Feed(props) {
                         <Button
                           variant="outline-dark"
                           style={{ marginTop: "14px" }}
+                          onClick={handleShareShow}
                         >
                           <i class="bi bi-share-fill"></i>
                         </Button>
@@ -696,6 +697,7 @@ function Feed(props) {
                         <Button
                           variant="outline-dark"
                           style={{ marginTop: "14px" }}
+                          onClick={handleShareShow}
                         >
                           <i class="bi bi-share-fill"></i>
                         </Button>
@@ -788,6 +790,7 @@ function Feed(props) {
                           <Button
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
+                            onClick={handleShareShow}
                           >
                             <i class="bi bi-share-fill"></i>
                           </Button>
@@ -883,6 +886,7 @@ function Feed(props) {
                           <Button
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
+                            onClick={handleShareShow}
                           >
                             <i class="bi bi-share-fill"></i>
                           </Button>
@@ -913,6 +917,7 @@ function Feed(props) {
                               <i class="bi bi-trash-fill"></i>
                             </Button>
                           </Col>
+                          
                         )}
                       </Row>
                     </Card.Body>
@@ -978,6 +983,7 @@ function Feed(props) {
                           <Button
                             variant="outline-dark"
                             style={{ marginTop: "14px" }}
+                            onClick={handleShareShow}
                           >
                             <i class="bi bi-share-fill"></i>
                           </Button>
@@ -1055,7 +1061,7 @@ function Feed(props) {
           <p className="lead">or copy link</p>
           <InputGroup className="mb-3">
             <Form.Control
-              placeholder="https://mergesocial.web.app/user/avh16813dc"
+              placeholder="https://mergesocial.web.app/user/ya12rsal"
               aria-label="Recipient's username"
               aria-describedby="basic-addon2"
             />
