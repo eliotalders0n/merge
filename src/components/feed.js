@@ -414,7 +414,7 @@ function Feed(props) {
                     >
                       <iframe
                         width="100%"
-                        height="auto"
+                        height="320vh"
                         src={"https://www.youtube.com/embed/" + videoId}
                         title="YouTube video player"
                         frameborder="0"
@@ -436,7 +436,7 @@ function Feed(props) {
                           <p>{post.text}</p>
                           <p className="lead text-muted">{finalTimestamp}</p>
                         </Card.Text>
-                        <img
+                        {/* <img
                           src={post.groupImage}
                           alt="group representation"
                           style={{
@@ -444,7 +444,7 @@ function Feed(props) {
                             borderRadius: "100px",
                             marginRight: "2vh",
                           }}
-                        />
+                        /> */}
                         <Row style={{ marginTop: "14px" }}>
                           <Col>
                             <img

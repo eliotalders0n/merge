@@ -5,6 +5,7 @@ import Feed from "./components/feed";
 import Profile from "./components/profile";
 import Explore from "./components/map";
 import Chat from "./components/chat";
+import ChatConvo from "./components/chatConvo";
 
 function Router(props) {
   return (
@@ -15,6 +16,7 @@ function Router(props) {
         <Route path="/profile" element={<Profile />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/chatConvo/:id" element={<ChatConvo />} />
       </Routes>
     </BrowserRouter>
   );

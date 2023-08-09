@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react";
 import Head from "./template/head";
-import {
-  Container,
-  Button,
-  Col,
-  Row,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Button, Col, Row, Form, InputGroup } from "react-bootstrap";
 import firebase from "../firebase";
 import { useNavigate } from "react-router-dom";
 import useGetUsers from "./hooks/useGetUsers";
+import { Link, Link as RouterLink } from "react-router-dom";
 
 function Chat(props) {
-
   const [user_, setdocs] = useState([]);
   const navigate = useNavigate();
 
@@ -72,55 +65,58 @@ function Chat(props) {
             />
           </InputGroup>
         </div>
-        {Users.filter((user) => user.group === user_.group).map((user) => 
-          <div>
-            <Row
-              key={user.id}
-              style={{
-                // backgroundColor: "rgb(50,50,50)",
-                color: "black",
-                margin: "10px 0",
-              }}
-            >
-              <Col>
-                <img
-                  src="assets/user.png"
-                  style={{
-                    width: "100%",
-                    margin: "50% auto",
-                    alignItems: "center",
-                  }}
-                ></img>
-              </Col>
-              <Col xs={8}>
-                <p className="lead my-1">{user.firstName}</p>
-                <br />
-                <p
-                  className=""
-                  style={{
-                    margin: "-25px 0",
-                    fontSize: "1rem",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: "100%",
-                  }}
-                >
-                  <i className="bi bi-check-all"></i> Auto-layout for flexbox
-                  grid columns also means you can set the width of one column
-                  and have the sibling columns automatically resize around{" "}
-                </p>
-              </Col>
-              <Col>
-                <p className="lead text-muted" style={{ margin: "50% 0" }}>
-                  04:31
-                </p>
-              </Col>              
-            </Row>
-            <hr/>
-          </div>
-        )}
-        ;
+        {Users.filter((user) => user.group === user_.group).map((user) => (
+          <Link
+            to={"/chatConvo/" + user.id}
+            style={{ color: "inherit", textDecoration: "none" }}
+          >
+            <div key={user.id}>
+              <Row
+                style={{
+                  // backgroundColor: "rgb(50,50,50)",
+                  color: "black",
+                  margin: "10px 0",
+                }}
+              >
+                <Col>
+                  <img
+                    src="assets/user.png"
+                    style={{
+                      width: "100%",
+                      margin: "50% auto",
+                      alignItems: "center",
+                    }}
+                  ></img>
+                </Col>
+                <Col xs={8}>
+                  <p className="lead my-1">{user.firstName}</p>
+                  <br />
+                  <p
+                    className=""
+                    style={{
+                      margin: "-25px 0",
+                      fontSize: "1rem",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    <i className="bi bi-check-all"></i> Auto-layout for flexbox
+                    grid columns also means you can set the width of one column
+                    and have the sibling columns automatically resize around{" "}
+                  </p>
+                </Col>
+                <Col>
+                  <p className="lead text-muted" style={{ margin: "50% 0" }}>
+                    04:31
+                  </p>
+                </Col>
+              </Row>
+              <hr />
+            </div>
+          </Link>
+        ))}
       </Container>
     </Container>
   );
