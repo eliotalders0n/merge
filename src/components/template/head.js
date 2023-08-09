@@ -7,19 +7,7 @@ function Head(props) {
     <Navbar fixed="bottom" style={{backgroundColor : "white"}}>
       <Container className="text-center" >
         <Navbar.Collapse className="justify-content-center">
-          <Col md={2} className="mx-auto">
-            <Nav.Link
-              href="/explore"
-              style={{
-                fontSize: "3vh",
-                textDecoration: "underline",
-                textDecorationColor: "cyan",
-              }}
-            >
-              <i className="bi bi-map-fill"></i>
-            </Nav.Link>
-          </Col>
-          <Col md={2} className="mx-auto">
+        <Col md={2} className="mx-auto">
             <Nav.Link
               href="/feed"
               style={{
@@ -34,6 +22,32 @@ function Head(props) {
             </Nav.Link>
           </Col>
 
+          <Col md={2} className="mx-auto">
+            <Nav.Link
+              href="/explore"
+              style={{
+                fontSize: "3vh",
+                textDecoration: "underline",
+                textDecorationColor: "cyan",
+              }}
+            >
+              <i className="bi bi-map-fill"></i>
+            </Nav.Link>
+          </Col>
+
+          <Col md={2} className="mx-auto">
+            <Nav.Link
+              href="/chat"
+              style={{
+                fontSize: "3vh",
+                textDecoration: "underline",
+                textDecorationColor: "cyan",
+              }}
+            >
+              <i className="bi bi-chat-square-fill"></i>
+            </Nav.Link>
+          </Col>
+          
           <Col md={2} className="mx-auto">
             <Nav.Link
               href="/profile"

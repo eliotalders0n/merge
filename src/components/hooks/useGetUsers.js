@@ -1,12 +1,11 @@
-import {useState, useEffect} from 'react';
-import firebase from "./../../firebase";
+import { useState, useEffect } from "react";
+import firebase from "../../firebase";
 
-
-const useGetPosts = () => {
-    const [docs, setdocs] = useState([])
+const useGetUsers = () => {
+  const [docs, setdocs] = useState([])
 
     useEffect(() => {
-         firebase.firestore().collection("posts").orderBy('timestamp', 'desc').onSnapshot((doc)=>{
+         firebase.firestore().collection("users").onSnapshot((doc)=>{
             const quotes = [];
             doc.docs.forEach(document => {
               const nb = {
@@ -19,6 +18,6 @@ const useGetPosts = () => {
          })
     }, [])
     return {docs}
-}
+};
 
-export default useGetPosts;
+export default useGetUsers;

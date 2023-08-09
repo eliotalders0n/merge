@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Feed from "./components/feed";
 import Profile from "./components/profile";
 import Explore from "./components/map";
+import Chat from "./components/chat";
 
 function Router(props) {
   return (
@@ -13,7 +14,7 @@ function Router(props) {
         <Route path="/feed" element={<Feed />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/explore" element={<Explore />} />
-        {/* <Route path="/help" element={<Help />} /> */}
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </BrowserRouter>
   );
