@@ -1,60 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import Head from "./template/head";
 import { Container, Button, Col, Row, Form, InputGroup } from "react-bootstrap";
 import firebase from "../firebase";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useGetUser from "./hooks/useGetUser";
+import useGetMessages from "./hooks/useGetMessages";
 
 function ChatConvo(props) {
-  const [user_, setdocs] = useState([]);
-  const navigate = useNavigate();
   const otherUser = useParams();
-  console.log("user id: " + otherUser.id);
+  // console.log("user id: " + otherUser.id);
   const user = firebase.auth().currentUser.uid;
+  const scroll = useRef();
 
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .onSnapshot((doc) => {
-        setdocs(doc.data());
-      });
-  }, []);
+  // const deleteItem = (id) => {
+  //   firebase
+  //     .firestore()
+  //     .collection("posts")
+  //     .doc(id)
+  //     .delete()
+  //     .then(() => {
+  //       alert("Post was deleted successfully");
+  //     })
+  //     .catch((e) => {
+  //       alert(e);
+  //     });
+  // };
 
-  const deleteItem = (id) => {
-    firebase
-      .firestore()
-      .collection("posts")
-      .doc(id)
-      .delete()
-      .then(() => {
-        alert("Post was deleted successfully");
-      })
-      .catch((e) => {
-        alert(e);
-      });
-  };
+  // console.log("user group" + user_.group);
 
-  console.log("user group" + user_.group);
-
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
+  const messages = useGetMessages().docs
   const [newMessage, setNewMessage] = useState("");
 
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection("messages")
-      .orderBy("timestamp", "asc")
-      .onSnapshot((snapshot) => {
-        const messagesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMessages(messagesData);
-      });
-  }, []);
-
+  // console.log("texts : " + messages)
   const sendMessage = async () => {
     if (user) {
       await firebase.firestore().collection("messages").add({
@@ -64,6 +42,7 @@ function ChatConvo(props) {
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       });
       setNewMessage("");
+      scroll.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -75,12 +54,12 @@ function ChatConvo(props) {
       <Container>
         {/* {Users.filter((user) => user.group === user_.group).map((user) =>  */}
         <div>
-          <Row
+          <Row className="fixed-top"
             style={{
               backgroundColor: "black",
-              borderRadius: "5px",
+              // borderRadius: "5px",
               color: "white",
-              margin: "10px 0",
+              margin: "0 0",
             }}
           >
             <Col>
@@ -91,6 +70,7 @@ function ChatConvo(props) {
                   margin: "50% auto",
                   alignItems: "center",
                 }}
+                alt="expanded"
               ></img>
             </Col>
             <Col xs={10}>
@@ -107,7 +87,7 @@ function ChatConvo(props) {
                   maxWidth: "100%",
                 }}
               >
-                Last Seen today at 10:12{" "}
+                {getUser.email}{" "}
               </p>
             </Col>
           </Row>
@@ -115,55 +95,49 @@ function ChatConvo(props) {
         </div>
         {/* )} */}
       </Container>
-      <Container style={{ marginBottom:"100px"}}>
+      <Container style={{ margin:"100px 0"}}>
         <Row>
+        {messages.length > 0 ? (
           <Col>
-            {messages
-              .map((message) => (
+          {/* eslint-disable-next-line */}
+          {messages.filter((text) => text.client === user && text.userId === otherUser.id || text.client === otherUser.id && text.userId === user)
+            .map((message) => (
 
-                message.client === user ? (<p
-                  key={message.id}
-                  style={{
-                    padding: "8px 6px",
-                    backgroundColor: "lightgreen",
-                    borderRadius: "12px",
-                    whiteSpace: "normal",
-                    width: "60%",
-                  }}
-                >
-                  {message.text}
-                  <br />
-                  {/* <span className="text-muted">{message.timestamp}</span> */}
-                </p>) : (<p
-                  key={message.id}
-                  style={{
-                    padding: "8px 6px",
-                    backgroundColor: "lightblue",
-                    borderRadius: "12px",
-                    whiteSpace: "normal",
-                    width: "60%",
-                    marginLeft: "40%"
-                  }}
-                >
-                  {message.text}
-                  <br />
-                  {/* <span className="text-muted">{message.timestamp}</span> */}
-                </p>)
-                // <p
-                //   key={message.id}
-                //   style={{
-                //     padding: "8px 6px",
-                //     backgroundColor: "lightgreen",
-                //     borderRadius: "12px",
-                //     whiteSpace: "normal",
-                //   }}
-                // >
-                //   {message.text}
-                //   <br />
-                //   {/* <span className="text-muted">{message.timestamp}</span> */}
-                // </p>
-              ))}
-          </Col>
+              message.client === user ? (<p
+                key={message.id}
+                style={{
+                  padding: "8px 6px",
+                  backgroundColor: "lightgreen",
+                  borderRadius: "12px",
+                  whiteSpace: "normal",
+                  width: "60%",
+                }}
+              >
+                <span ref={scroll}></span>
+                {message.text}
+                <br />
+                {/* <span className="text-muted">{message.timestamp}</span> */}
+              </p>) : (<p
+                key={message.id}
+                style={{
+                  padding: "8px 6px",
+                  backgroundColor: "lightblue",
+                  borderRadius: "12px",
+                  whiteSpace: "normal",
+                  width: "60%",
+                  marginLeft: "40%"
+                }}
+              >
+                <span ref={scroll}></span>
+                {message.text}
+                <br />
+                {/* <span className="text-muted">{message.timestamp}</span> */}
+              </p>)
+            ))}
+        </Col>
+        ) : (
+          <div>No messages sent yet.</div>
+        )}
         </Row>
       </Container>
 
@@ -182,6 +156,7 @@ function ChatConvo(props) {
                 variant="dark"
                 id="button-addon2"
                 onClick={sendMessage}
+                scroll={scroll}
               >
                 Send
               </Button>

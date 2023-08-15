@@ -1,24 +1,12 @@
 import { useState, useEffect } from "react";
 import Head from "./template/head";
-import { Container, Button, Col, Row, Form, InputGroup } from "react-bootstrap";
+import { Container, Col, Row, Form, InputGroup } from "react-bootstrap";
 import firebase from "../firebase";
-import { useNavigate } from "react-router-dom";
 import useGetUsers from "./hooks/useGetUsers";
-import { Link, Link as RouterLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Chat(props) {
   const [user_, setdocs] = useState([]);
-  const navigate = useNavigate();
-
-  const Logout = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        navigate("/", { replace: true });
-        window.location.reload(false);
-      });
-  };
 
   useEffect(() => {
     firebase
@@ -30,23 +18,21 @@ function Chat(props) {
       });
   }, []);
 
-  const deleteItem = (id) => {
-    firebase
-      .firestore()
-      .collection("posts")
-      .doc(id)
-      .delete()
-      .then(() => {
-        alert("Post was deleted successfully");
-      })
-      .catch((e) => {
-        alert(e);
-      });
-  };
+  // const deleteItem = (id) => {
+  //   firebase
+  //     .firestore()
+  //     .collection("posts")
+  //     .doc(id)
+  //     .delete()
+  //     .then(() => {
+  //       alert("Post was deleted successfully");
+  //     })
+  //     .catch((e) => {
+  //       alert(e);
+  //     });
+  // };
 
   const Users = useGetUsers().docs;
-
-  console.log("user group" + user_.group);
 
   return (
     <Container fluid>
@@ -67,10 +53,11 @@ function Chat(props) {
         </div>
         {Users.filter((user) => user.group === user_.group).map((user) => (
           <Link
+            key={user.id}
             to={"/chatConvo/" + user.id}
             style={{ color: "inherit", textDecoration: "none" }}
           >
-            <div key={user.id}>
+            <div>
               <Row
                 style={{
                   // backgroundColor: "rgb(50,50,50)",
@@ -80,6 +67,7 @@ function Chat(props) {
               >
                 <Col>
                   <img
+                   alt=""
                     src="assets/user.png"
                     style={{
                       width: "100%",
@@ -95,21 +83,19 @@ function Chat(props) {
                     className=""
                     style={{
                       margin: "-25px 0",
-                      fontSize: "1rem",
-                      whiteSpace: "nowrap",
+                      fontSize: "10px",
+                      whiteSpace: "normal",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       maxWidth: "100%",
                     }}
                   >
-                    <i className="bi bi-check-all"></i> Auto-layout for flexbox
-                    grid columns also means you can set the width of one column
-                    and have the sibling columns automatically resize around{" "}
+                    <i className="bi bi-check-all"></i> Communication is the bond that connects souls.{" "}
                   </p>
                 </Col>
                 <Col>
                   <p className="lead text-muted" style={{ margin: "50% 0" }}>
-                    04:31
+                  <i className="bi bi-chat-fill"></i>
                   </p>
                 </Col>
               </Row>

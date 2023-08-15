@@ -319,7 +319,7 @@ function Feed(props) {
 
       <Container className="d-flex justify-content-center">
         <Button
-          variant="outline-dark"
+          variant="dark"
           style={{ width: "100%" }}
           className="my-3"
           onClick={handleShow}
