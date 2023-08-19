@@ -4,6 +4,7 @@ import { Container, Col, Row, Form, InputGroup } from "react-bootstrap";
 import firebase from "../firebase";
 import useGetUsers from "./hooks/useGetUsers";
 import { Link } from "react-router-dom";
+import ParticlBg from "./template/particles";
 
 function Chat(props) {
   const [user_, setdocs] = useState([]);
@@ -35,7 +36,11 @@ function Chat(props) {
   const Users = useGetUsers().docs;
 
   return (
-    <Container fluid>
+    <Container
+    fluid
+    style={{ backgroundColor: "rgb(220,220,220)", marginBottom: "10vh" }}
+  >
+    <ParticlBg/>
       <Head />
       <Container>
         <h3 className="display-3">Chats</h3>
@@ -78,7 +83,7 @@ function Chat(props) {
                   ></img>
                 </Col>
                 <Col xs={8}>
-                  <p className="display-5 my-3">{user.firstName}</p>
+                  <p className="lead my-2">{user.firstName}</p>
                   <br />
                 </Col>
                 <Col>

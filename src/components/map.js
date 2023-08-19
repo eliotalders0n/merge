@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 // import "leaflet/dist/leaflet.css";
 import useGetPosts from "./hooks/useGetPosts";
+import ParticlBg from "./template/particles";
 
 function Explore(props) {
   const Posts = useGetPosts().docs;
@@ -42,19 +43,24 @@ function Explore(props) {
   console.log('Generating marker positions' + generateOffset);
 
   return (
-    <Container fluid>
+    <Container
+    fluid
+    style={{ backgroundColor: "rgb(220,220,220)" }}
+  >
+    <ParticlBg/>
       <Head />
 
       <Container className="d-flex justify-content-center my-1">
         <h2 className="display-2">Explore</h2>
       </Container>
 
-      <Container>
-        <p className="display-5">Where are your merger's</p>
+      <Container className="my-3">
+        <p className="display-6">Where are your merger's</p>
         <MapContainer
           style={{
             height: "70vh",
             marginTop: "3vh",
+            marginBottom: "3vh",
             borderRadius: "10px",
           }}
           center={[-15.363402, 28.319056]} //lat, lng

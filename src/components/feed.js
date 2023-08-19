@@ -25,6 +25,7 @@ import {
   FacebookShareButton,
   TelegramShareButton,
 } from "react-share";
+import ParticlBg from "./template/particles";
 // fsq3U9h/vWVthiZ0bbPijl4uXjRlr2d0pzyFM3XjgGY2nP4=
 
 function Feed(props) {
@@ -258,6 +259,7 @@ function Feed(props) {
       fluid
       style={{ backgroundColor: "rgb(220,220,220)", marginBottom: "10vh" }}
     >
+      <ParticlBg/>
       <p className="display-3 text-center">
         Hey {user_details.firstName}{" "}
         <Badge
