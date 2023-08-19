@@ -39,7 +39,8 @@ function Chat(props) {
       <Head />
       <Container>
         <h3 className="display-3">Chats</h3>
-        <div>
+        <i className="bi bi-arrow-right-square-fill"></i> Communication is the bond that connects souls.{" "}
+        <div className="my-3">
           <InputGroup className="mb-3">
             <InputGroup.Text id="basic-addon1">
               <i className="bi bi-search"></i>
@@ -77,21 +78,8 @@ function Chat(props) {
                   ></img>
                 </Col>
                 <Col xs={8}>
-                  <p className="lead my-1">{user.firstName}</p>
+                  <p className="display-5 my-3">{user.firstName}</p>
                   <br />
-                  <p
-                    className=""
-                    style={{
-                      margin: "-25px 0",
-                      fontSize: "10px",
-                      whiteSpace: "normal",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    <i className="bi bi-check-all"></i> Communication is the bond that connects souls.{" "}
-                  </p>
                 </Col>
                 <Col>
                   <p className="lead text-muted" style={{ margin: "50% 0" }}>

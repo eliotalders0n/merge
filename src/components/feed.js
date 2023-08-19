@@ -12,6 +12,7 @@ import {
   Badge,
   Modal,
   InputGroup,
+  Spinner,
   // Toast
 } from "react-bootstrap";
 import firebase from "./../firebase";
@@ -203,7 +204,8 @@ function Feed(props) {
     handleClose();
   };
 
-  const Posts = useGetPosts().docs;
+  // const docs = useGetPosts(3).docs;
+  const { docs, loading, fetchMorePosts } = useGetPosts(5);
   const Group = useGetGroup(user_details.group).docs;
 
   const deleteItem = (id) => {
@@ -388,8 +390,9 @@ function Feed(props) {
       <Container fluid className="d-flex justify-content-center">
         {body === "group" && activeFilter === "social" && (
           <Row>
-            {Posts.filter((post) => post.group === Group.GroupNumber).map(
-              (post) => {
+            {docs
+              .filter((post) => post.group === Group.GroupNumber)
+              .map((post) => {
                 // const jsDate = post.timestamp.toDate();
                 const jsDate = post.timestamp?.toDate();
                 const formattedTimestamp =
@@ -585,221 +588,258 @@ function Feed(props) {
                             </Col>
                           )}
                         </Row>
-                      {/* add comment section */}
+                        {/* add comment section */}
                       </Card.Body>
                     </Card>
                   );
-              }
+              })}
+
+            {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
             )}
           </Row>
         )}
 
         {body === "group" && activeFilter === "events" && (
           <Row>
-            {Posts.filter(
-              (post) =>
-                post.postType === "event" && post.group === Group.GroupNumber
-            ).map((post) => {
-              return (
-                <Card
-                  key={post.id}
-                  className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
-                  style={{
-                    maxWidth: "30rem",
-                    border: "none",
-                    padding: "0",
-                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                  }}
-                >
-                  <Card.Img variant="top" src={post.imageUrl} />
-                  <Card.Body>
-                    {post.post_status === true && (
+            {docs
+              .filter(
+                (post) =>
+                  post.postType === "event" && post.group === Group.GroupNumber
+              )
+              .map((post) => {
+                return (
+                  <Card
+                    key={post.id}
+                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                      {post.post_status === true && (
+                        <Badge
+                          bg="primary"
+                          style={{ padding: "8px", marginBottom: "8px" }}
+                        >
+                          Group {post.group} Only
+                        </Badge>
+                      )}
+                      <Card.Title>{post.user_name}</Card.Title>
                       <Badge
-                        bg="primary"
+                        bg="dark"
                         style={{ padding: "8px", marginBottom: "8px" }}
                       >
-                        Group {post.group} Only
+                        {" "}
+                        {post.postType}{" "}
                       </Badge>
-                    )}
-                    <Card.Title>{post.user_name}</Card.Title>
-                    <Badge
-                      bg="dark"
-                      style={{ padding: "8px", marginBottom: "8px" }}
-                    >
-                      {" "}
-                      {post.postType}{" "}
-                    </Badge>
-                    <Card.Text>
-                      <p>{post.text}</p>
-                      <p className="text-muted">Date : {post.startDate}</p>
-                    </Card.Text>
-                    <Row style={{ marginTop: "14px" }}>
-                      <Col>
-                        <img
-                          src={post.groupImage}
-                          alt="group representation"
-                          style={{
-                            width: "6vh",
-                            borderRadius: "100px",
-                            marginRight: "2vh",
-                          }}
-                        />
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                          onClick={handleShareShow}
-                        >
-                          <i className="bi bi-share-fill"></i>
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                          onClick={() => handleLikeClick(post.id)}
-                          // disabled={liked}
-                        >
-                          {post.likedByCurrentUser ? (
-                            <i className="bi bi-heart-fill"></i>
-                          ) : (
-                            <i className="bi bi-heart"></i>
-                          )}
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                        >
-                          <i className="bi bi-chat-fill"></i>
-                        </Button>
-                      </Col>
-                      {user_id && user_id === post.user_id && (
+                      <Card.Text>
+                        <p>{post.text}</p>
+                        <p className="text-muted">Date : {post.startDate}</p>
+                      </Card.Text>
+                      <Row style={{ marginTop: "14px" }}>
+                        <Col>
+                          <img
+                            src={post.groupImage}
+                            alt="group representation"
+                            style={{
+                              width: "6vh",
+                              borderRadius: "100px",
+                              marginRight: "2vh",
+                            }}
+                          />
+                        </Col>
                         <Col>
                           <Button
                             variant="outline-dark"
-                            onClick={() => deleteItem(post.id)}
                             style={{ marginTop: "14px" }}
+                            onClick={handleShareShow}
                           >
-                            <i className="bi bi-trash-fill"></i>
+                            <i className="bi bi-share-fill"></i>
                           </Button>
                         </Col>
-                      )}
-                    </Row>
-                  </Card.Body>
-                </Card>
-              );
-            })}
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                            onClick={() => handleLikeClick(post.id)}
+                            // disabled={liked}
+                          >
+                            {post.likedByCurrentUser ? (
+                              <i className="bi bi-heart-fill"></i>
+                            ) : (
+                              <i className="bi bi-heart"></i>
+                            )}
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i className="bi bi-chat-fill"></i>
+                          </Button>
+                        </Col>
+                        {user_id && user_id === post.user_id && (
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              onClick={() => deleteItem(post.id)}
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i className="bi bi-trash-fill"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+               {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
+            )}
           </Row>
         )}
 
         {body === "group" && activeFilter === "serve" && (
           <Row>
-            {Posts.filter(
-              (post) =>
-                post.postType === "serve" && post.group === Group.GroupNumber
-            ).map((post) => {
-              return (
-                <Card
-                  key={post.id}
-                  className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
-                  style={{
-                    maxWidth: "30rem",
-                    border: "none",
-                    padding: "0",
-                    boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                  }}
-                >
-                  <Card.Img variant="top" src={post.imageUrl} />
-                  <Card.Body>
-                    {post.post_status === true && (
+            {docs
+              .filter(
+                (post) =>
+                  post.postType === "serve" && post.group === Group.GroupNumber
+              )
+              .map((post) => {
+                return (
+                  <Card
+                    key={post.id}
+                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
+                    style={{
+                      maxWidth: "30rem",
+                      border: "none",
+                      padding: "0",
+                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                    }}
+                  >
+                    <Card.Img variant="top" src={post.imageUrl} />
+                    <Card.Body>
+                      {post.post_status === true && (
+                        <Badge
+                          bg="primary"
+                          style={{ padding: "8px", marginBottom: "8px" }}
+                        >
+                          Group {post.group} Only
+                        </Badge>
+                      )}
+                      <Card.Title>{post.user_name}</Card.Title>
                       <Badge
-                        bg="primary"
+                        bg="dark"
                         style={{ padding: "8px", marginBottom: "8px" }}
                       >
-                        Group {post.group} Only
+                        {" "}
+                        {post.postType}{" "}
                       </Badge>
-                    )}
-                    <Card.Title>{post.user_name}</Card.Title>
-                    <Badge
-                      bg="dark"
-                      style={{ padding: "8px", marginBottom: "8px" }}
-                    >
-                      {" "}
-                      {post.postType}{" "}
-                    </Badge>
-                    <Card.Text>
-                      <p>{post.text}</p>
-                      <p className="text-muted">Date : {post.startDate}</p>
-                    </Card.Text>
-                    <Row style={{ marginTop: "14px" }}>
-                      <Col>
-                        <img
-                          src={post.groupImage}
-                          alt="group representation"
-                          style={{
-                            width: "6vh",
-                            borderRadius: "100px",
-                            marginRight: "2vh",
-                          }}
-                        />
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                          onClick={handleShareShow}
-                        >
-                          <i className="bi bi-share-fill"></i>
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                          onClick={() => handleLikeClick(post.id)}
-                          // disabled={liked}
-                        >
-                          {post.likedByCurrentUser ? (
-                            <i className="bi bi-heart-fill"></i>
-                          ) : (
-                            <i className="bi bi-heart"></i>
-                          )}
-                        </Button>
-                      </Col>
-                      <Col>
-                        <Button
-                          variant="outline-dark"
-                          style={{ marginTop: "14px" }}
-                        >
-                          <i className="bi bi-chat-fill"></i>
-                        </Button>
-                      </Col>
-                      {user_id && user_id === post.user_id && (
+                      <Card.Text>
+                        <p>{post.text}</p>
+                        <p className="text-muted">Date : {post.startDate}</p>
+                      </Card.Text>
+                      <Row style={{ marginTop: "14px" }}>
+                        <Col>
+                          <img
+                            src={post.groupImage}
+                            alt="group representation"
+                            style={{
+                              width: "6vh",
+                              borderRadius: "100px",
+                              marginRight: "2vh",
+                            }}
+                          />
+                        </Col>
                         <Col>
                           <Button
                             variant="outline-dark"
-                            onClick={() => deleteItem(post.id)}
                             style={{ marginTop: "14px" }}
+                            onClick={handleShareShow}
                           >
-                            <i className="bi bi-trash-fill"></i>
+                            <i className="bi bi-share-fill"></i>
                           </Button>
                         </Col>
-                      )}
-                    </Row>
-                  </Card.Body>
-                </Card>
-              );
-            })}
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                            onClick={() => handleLikeClick(post.id)}
+                            // disabled={liked}
+                          >
+                            {post.likedByCurrentUser ? (
+                              <i className="bi bi-heart-fill"></i>
+                            ) : (
+                              <i className="bi bi-heart"></i>
+                            )}
+                          </Button>
+                        </Col>
+                        <Col>
+                          <Button
+                            variant="outline-dark"
+                            style={{ marginTop: "14px" }}
+                          >
+                            <i className="bi bi-chat-fill"></i>
+                          </Button>
+                        </Col>
+                        {user_id && user_id === post.user_id && (
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              onClick={() => deleteItem(post.id)}
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i className="bi bi-trash-fill"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                );
+              })}
+               {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
+            )}
           </Row>
         )}
 
         {/* Public data */}
         {body === "public" && activeFilter === "social" && (
           <Row>
-            {Posts.map((post) => {
+            {docs.map((post) => {
               if (!post.post_status) {
                 // const jsDate = post.timestamp.toDate();
                 const jsDate = post.timestamp?.toDate();
@@ -895,210 +935,247 @@ function Feed(props) {
                 return null;
               }
             })}
+             {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
+            )}
           </Row>
         )}
 
         {body === "public" && activeFilter === "events" && (
           <Row>
-            {Posts.filter((post) => post.postType === "event").map((post) => {
-              if (!post.post_status)
-                return (
-                  <Card
-                    key={post.id}
-                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
-                    style={{
-                      maxWidth: "30rem",
-                      border: "none",
-                      padding: "0",
-                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                    }}
-                  >
-                    <Card.Img variant="top" src={post.imageUrl} />
-                    <Card.Body>
-                      {post.post_status === true && (
+            {docs
+              .filter((post) => post.postType === "event")
+              .map((post) => {
+                if (!post.post_status)
+                  return (
+                    <Card
+                      key={post.id}
+                      className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
+                      style={{
+                        maxWidth: "30rem",
+                        border: "none",
+                        padding: "0",
+                        boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                      }}
+                    >
+                      <Card.Img variant="top" src={post.imageUrl} />
+                      <Card.Body>
+                        {post.post_status === true && (
+                          <Badge
+                            bg="primary"
+                            style={{ padding: "8px", marginBottom: "8px" }}
+                          >
+                            Group {post.group} Only
+                          </Badge>
+                        )}
+                        <Card.Title>{post.user_name}</Card.Title>
                         <Badge
-                          bg="primary"
+                          bg="dark"
                           style={{ padding: "8px", marginBottom: "8px" }}
                         >
-                          Group {post.group} Only
+                          {" "}
+                          {post.postType}{" "}
                         </Badge>
-                      )}
-                      <Card.Title>{post.user_name}</Card.Title>
-                      <Badge
-                        bg="dark"
-                        style={{ padding: "8px", marginBottom: "8px" }}
-                      >
-                        {" "}
-                        {post.postType}{" "}
-                      </Badge>
-                      <Card.Text>
-                        <p>{post.text}</p>
-                        <p className="text-muted">Date : {post.startDate}</p>
-                      </Card.Text>
-                      <Row style={{ marginTop: "14px" }}>
-                        <Col>
-                          <img
-                            src={post.groupImage}
-                            alt="group representation"
-                            style={{
-                              width: "6vh",
-                              borderRadius: "100px",
-                              marginRight: "2vh",
-                            }}
-                          />
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                            onClick={handleShareShow}
-                          >
-                            <i className="bi bi-share-fill"></i>
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                            onClick={() => handleLikeClick(post.id)}
-                            // disabled={liked}
-                          >
-                            {post.likedByCurrentUser ? (
-                              <i className="bi bi-heart-fill"></i>
-                            ) : (
-                              <i className="bi bi-heart"></i>
-                            )}
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                          >
-                            <i className="bi bi-chat-fill"></i>
-                          </Button>
-                        </Col>
-                        {user_id && user_id === post.user_id && (
+                        <Card.Text>
+                          <p>{post.text}</p>
+                          <p className="text-muted">Date : {post.startDate}</p>
+                        </Card.Text>
+                        <Row style={{ marginTop: "14px" }}>
+                          <Col>
+                            <img
+                              src={post.groupImage}
+                              alt="group representation"
+                              style={{
+                                width: "6vh",
+                                borderRadius: "100px",
+                                marginRight: "2vh",
+                              }}
+                            />
+                          </Col>
                           <Col>
                             <Button
                               variant="outline-dark"
-                              onClick={() => deleteItem(post.id)}
                               style={{ marginTop: "14px" }}
+                              onClick={handleShareShow}
                             >
-                              <i className="bi bi-trash-fill"></i>
+                              <i className="bi bi-share-fill"></i>
                             </Button>
                           </Col>
-                        )}
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                );
-              else {
-                return null;
-              }
-            })}
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                              onClick={() => handleLikeClick(post.id)}
+                              // disabled={liked}
+                            >
+                              {post.likedByCurrentUser ? (
+                                <i className="bi bi-heart-fill"></i>
+                              ) : (
+                                <i className="bi bi-heart"></i>
+                              )}
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i className="bi bi-chat-fill"></i>
+                            </Button>
+                          </Col>
+                          {user_id && user_id === post.user_id && (
+                            <Col>
+                              <Button
+                                variant="outline-dark"
+                                onClick={() => deleteItem(post.id)}
+                                style={{ marginTop: "14px" }}
+                              >
+                                <i className="bi bi-trash-fill"></i>
+                              </Button>
+                            </Col>
+                          )}
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  );
+                else {
+                  return null;
+                }
+              })}
+               {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
+            )}
           </Row>
         )}
 
         {body === "public" && activeFilter === "serve" && (
           <Row>
-            {Posts.filter((post) => post.postType === "serve").map((post) => {
-              if (!post.post_status)
-                return (
-                  <Card
-                    key={post.id}
-                    className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
-                    style={{
-                      maxWidth: "30rem",
-                      border: "none",
-                      padding: "0",
-                      boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
-                    }}
-                  >
-                    <Card.Img variant="top" src={post.imageUrl} />
-                    <Card.Body>
-                      {post.post_status === true && (
+            {docs
+              .filter((post) => post.postType === "serve")
+              .map((post) => {
+                if (!post.post_status)
+                  return (
+                    <Card
+                      key={post.id}
+                      className="mx-auto my-2 animate__animated animate__bounceInLeft animate__slow animate__delay-1s"
+                      style={{
+                        maxWidth: "30rem",
+                        border: "none",
+                        padding: "0",
+                        boxShadow: "2px 2px 2px 2px rgba(0, 60, 60, 0.3)",
+                      }}
+                    >
+                      <Card.Img variant="top" src={post.imageUrl} />
+                      <Card.Body>
+                        {post.post_status === true && (
+                          <Badge
+                            bg="primary"
+                            style={{ padding: "8px", marginBottom: "8px" }}
+                          >
+                            Group {post.group} Only
+                          </Badge>
+                        )}
+                        <Card.Title>{post.user_name}</Card.Title>
                         <Badge
-                          bg="primary"
+                          bg="dark"
                           style={{ padding: "8px", marginBottom: "8px" }}
                         >
-                          Group {post.group} Only
+                          {" "}
+                          {post.postType}{" "}
                         </Badge>
-                      )}
-                      <Card.Title>{post.user_name}</Card.Title>
-                      <Badge
-                        bg="dark"
-                        style={{ padding: "8px", marginBottom: "8px" }}
-                      >
-                        {" "}
-                        {post.postType}{" "}
-                      </Badge>
-                      <Card.Text>
-                        <p>{post.text}</p>
-                        <p className="text-muted">Date : {post.startDate}</p>
-                      </Card.Text>
-                      <Row style={{ marginTop: "14px" }}>
-                        <Col>
-                          <img
-                            src={post.groupImage}
-                            alt="group representation"
-                            style={{
-                              width: "6vh",
-                              borderRadius: "100px",
-                              marginRight: "2vh",
-                            }}
-                          />
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                            onClick={handleShareShow}
-                          >
-                            <i className="bi bi-share-fill"></i>
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                            onClick={() => handleLikeClick(post.id)}
-                            // disabled={liked}
-                          >
-                            {post.likedByCurrentUser ? (
-                              <i className="bi bi-heart-fill"></i>
-                            ) : (
-                              <i className="bi bi-heart"></i>
-                            )}
-                          </Button>
-                        </Col>
-                        <Col>
-                          <Button
-                            variant="outline-dark"
-                            style={{ marginTop: "14px" }}
-                          >
-                            <i className="bi bi-chat-fill"></i>
-                          </Button>
-                        </Col>
-                        {user_id && user_id === post.user_id && (
+                        <Card.Text>
+                          <p>{post.text}</p>
+                          <p className="text-muted">Date : {post.startDate}</p>
+                        </Card.Text>
+                        <Row style={{ marginTop: "14px" }}>
+                          <Col>
+                            <img
+                              src={post.groupImage}
+                              alt="group representation"
+                              style={{
+                                width: "6vh",
+                                borderRadius: "100px",
+                                marginRight: "2vh",
+                              }}
+                            />
+                          </Col>
                           <Col>
                             <Button
                               variant="outline-dark"
-                              onClick={() => deleteItem(post.id)}
                               style={{ marginTop: "14px" }}
+                              onClick={handleShareShow}
                             >
-                              <i className="bi bi-trash-fill"></i>
+                              <i className="bi bi-share-fill"></i>
                             </Button>
                           </Col>
-                        )}
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                );
-              else {
-                return null;
-              }
-            })}
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                              onClick={() => handleLikeClick(post.id)}
+                              // disabled={liked}
+                            >
+                              {post.likedByCurrentUser ? (
+                                <i className="bi bi-heart-fill"></i>
+                              ) : (
+                                <i className="bi bi-heart"></i>
+                              )}
+                            </Button>
+                          </Col>
+                          <Col>
+                            <Button
+                              variant="outline-dark"
+                              style={{ marginTop: "14px" }}
+                            >
+                              <i className="bi bi-chat-fill"></i>
+                            </Button>
+                          </Col>
+                          {user_id && user_id === post.user_id && (
+                            <Col>
+                              <Button
+                                variant="outline-dark"
+                                onClick={() => deleteItem(post.id)}
+                                style={{ marginTop: "14px" }}
+                              >
+                                <i className="bi bi-trash-fill"></i>
+                              </Button>
+                            </Col>
+                          )}
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  );
+                else {
+                  return null;
+                }
+              })}
+               {loading && <div className="loading-overlay">
+                <Spinner animation="grow" role="status" variant="dark">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>}
+
+            {!loading && docs.length > 0 && (
+              <Button variant="dark" onClick={fetchMorePosts} disabled={!fetchMorePosts}>
+                Load More Posts
+              </Button>
+            )}
           </Row>
         )}
       </Container>
