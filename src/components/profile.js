@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Head from "./template/head";
-import { Container, Button, Col, Card, Row, ListGroup, Spinner } from "react-bootstrap";
+import { Container, Button, Col, Card, Row, Spinner } from "react-bootstrap";
 import firebase from "./../firebase";
 import useGetGroup from "./hooks/useGetGroup";
 import useGetPosts from "./hooks/useGetPosts";
@@ -142,9 +142,9 @@ function Profile(props) {
               value="{user_.password}"
               style={{ border: "none", backgroundColor: "transparent" }}
             />
+            <Button onClick={() => Logout()} variant="outline-dark">Logout</Button>
           </Col>
         </Row>
-
         <br />
       </Container>
 

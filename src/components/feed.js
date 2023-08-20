@@ -485,14 +485,14 @@ function Feed(props) {
                             </Button>
                           </Col>
                           <Col>
-                            <Button
+                           {/*  <Button
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
                               <i className="bi bi-chat-fill"></i>
-                            </Button>
+                            </Button> */}
                           </Col>
-                          {user_id && user_id === post.user_id && (
+                          {/* {user_id && user_id === post.user_id && (
                             <Col>
                               <Button
                                 variant="outline-dark"
@@ -502,7 +502,7 @@ function Feed(props) {
                                 <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
-                          )}
+                          )} */}
                         </Row>
                       </Card.Body>
                     </Card>
@@ -571,14 +571,14 @@ function Feed(props) {
                             </Button>
                           </Col>
                           <Col>
-                            <Button
+                           {/*  <Button
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
                               <i className="bi bi-chat-fill"></i>
-                            </Button>
+                            </Button> */}
                           </Col>
-                          {user_id && user_id === post.user_id && (
+                          {/* {user_id && user_id === post.user_id && (
                             <Col>
                               <Button
                                 variant="outline-dark"
@@ -588,7 +588,7 @@ function Feed(props) {
                                 <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
-                          )}
+                          )} */}
                         </Row>
                         {/* add comment section */}
                       </Card.Body>
@@ -1026,14 +1026,14 @@ function Feed(props) {
                             </Button>
                           </Col>
                           <Col>
-                            <Button
+                           {/*  <Button
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
                               <i className="bi bi-chat-fill"></i>
-                            </Button>
+                            </Button> */}
                           </Col>
-                          {user_id && user_id === post.user_id && (
+                          {/* {user_id && user_id === post.user_id && (
                             <Col>
                               <Button
                                 variant="outline-dark"
@@ -1043,7 +1043,7 @@ function Feed(props) {
                                 <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
-                          )}
+                          )} */}
                         </Row>
                       </Card.Body>
                     </Card>
@@ -1141,14 +1141,14 @@ function Feed(props) {
                             </Button>
                           </Col>
                           <Col>
-                            <Button
+                           {/*  <Button
                               variant="outline-dark"
                               style={{ marginTop: "14px" }}
                             >
                               <i className="bi bi-chat-fill"></i>
-                            </Button>
+                            </Button> */}
                           </Col>
-                          {user_id && user_id === post.user_id && (
+                          {/* {user_id && user_id === post.user_id && (
                             <Col>
                               <Button
                                 variant="outline-dark"
@@ -1158,7 +1158,7 @@ function Feed(props) {
                                 <i className="bi bi-trash-fill"></i>
                               </Button>
                             </Col>
-                          )}
+                          )} */}
                         </Row>
                       </Card.Body>
                     </Card>
